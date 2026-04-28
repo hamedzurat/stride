@@ -1,8 +1,23 @@
 {
   "$schema": "https://inlang.com/schema/inlang-message-format",
-  "add_button": "Add",
-  "add_task_placeholder": "What needs to be done?",
-  "delete_button": "Delete",
-  "tasks_description": "Manage your daily tasks below.",
-  "todo_title": "Todo List"
+  "debug_autofill": "Debug Auto-fill",
+  "email": "Email",
+  "error_invalid_credentials": "Invalid email or password.",
+  "error_login_failed": "Login failed.",
+  "forgot_password_link": "Forgot your password?",
+  "log_in_link": "Log in",
+  "logging_in": "Logging in...",
+  "login_button": "Login",
+  "login_subtitle": "Login to your Stride account",
+  "login_welcome": "Welcome back",
+  "password": "Password",
+  "privacy_policy": "Privacy Policy",
+  "remember_password": "Remember your password?",
+  "reset_password_subtitle": "Enter your email and we'll send a link to reset your Stride password.",
+  "reset_password_title": "Reset Password",
+  "send_reset_link": "Send Reset Link",
+  "terms_agreement": "By clicking continue, you agree to our {terms} and {privacy}.",
+  "terms_of_service": "Terms of Service",
+  "toggle_language": "Toggle language",
+  "toggle_theme": "Toggle theme"
 }

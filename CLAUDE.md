@@ -11,3 +11,4 @@ Convex agent skills for common tasks can be installed by running `bunx convex ai
 - **Safe Deletion**: Never use `rm`, `rmdir`, `shred`, or `unlink`. Always use `trash-cli` (e.g., `trash ./filename`) to ensure files are moved to the trash rather than permanently deleted.
 - **Runtime & Package Management**: Use `bun` exclusively for all commands and package management. Do not use `node`, `npm`, `pnpm`, `yarn`, `npx`, or `pnpx`.
 - **UI & Styling**: Prioritize `shadcn-svelte` components from `src/lib/components/ui` and use Tailwind CSS for styling. Do not define custom colors; instead, use the theme-consistent colors defined in `src/routes/layout.css`.
+- **Svelte Best Practices**: Always use keyed `{#each}` blocks in Svelte (e.g., `{#each items as item (item.id)}` or `{#each items as item, i (i)}`) to ensure optimal DOM updates and avoid linting warnings.

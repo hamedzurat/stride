@@ -1,8 +1,23 @@
 {
   "$schema": "https://inlang.com/schema/inlang-message-format",
-  "add_button": "যোগ করুন",
-  "add_task_placeholder": "আজ কী করতে হবে?",
-  "delete_button": "মুছে ফেলুন",
-  "tasks_description": "আপনার দৈনন্দিন কাজগুলো নিচে পরিচালনা করুন।",
-  "todo_title": "কাজের তালিকা"
+  "debug_autofill": "ডিবাগ অটো-ফিল",
+  "email": "ইমেইল",
+  "error_invalid_credentials": "ভুল ইমেইল বা পাসওয়ার্ড।",
+  "error_login_failed": "লগইন ব্যর্থ হয়েছে।",
+  "forgot_password_link": "পাসওয়ার্ড ভুলে গেছেন?",
+  "log_in_link": "লগইন করুন",
+  "logging_in": "লগইন হচ্ছে...",
+  "login_button": "লগইন করুন",
+  "login_subtitle": "আপনার স্ট্রাইড অ্যাকাউন্টে লগইন করুন",
+  "login_welcome": "আবার স্বাগতম",
+  "password": "পাসওয়ার্ড",
+  "privacy_policy": "গোপনীয়তা নীতি",
+  "remember_password": "পাসওয়ার্ড মনে আছে?",
+  "reset_password_subtitle": "আপনার ইমেইল লিখুন এবং আমরা আপনার স্ট্রাইড পাসওয়ার্ড রিসেট করার জন্য একটি লিঙ্ক পাঠাবো।",
+  "reset_password_title": "পাসওয়ার্ড রিসেট করুন",
+  "send_reset_link": "রিসেট লিঙ্ক পাঠান",
+  "terms_agreement": "চালিয়ে যাওয়ার মাধ্যমে, আপনি আমাদের {terms} এবং {privacy}-তে সম্মত হচ্ছেন।",
+  "terms_of_service": "সেবার শর্তাবলী",
+  "toggle_language": "ভাষা পরিবর্তন করুন",
+  "toggle_theme": "থিম পরিবর্তন করুন"
 }
