@@ -11,6 +11,7 @@
   import { api } from '$convex/_generated/api.js';
 
   import loginImage from '$lib/assets/login-image.jpg?enhanced';
+  import Blurhash from '$lib/components/ui/blurhash.svelte';
   import { Button } from '$lib/components/ui/button/index.js';
   import * as Card from '$lib/components/ui/card/index.js';
   import * as ContextMenu from '$lib/components/ui/context-menu/index.js';
@@ -24,6 +25,8 @@
   import { setSession } from '$lib/session';
 
   import credentialsData from './credentials.json';
+
+  const loginImageBlurhash = 'UFGl6K_2tlR*~qNxRkWB$*IV9Zx]Xmo}WBWC';
 
   const localeLabels: Record<string, string> = {
     en: 'English',
@@ -170,12 +173,13 @@
           </form>
 
           <div
-            class="relative hidden h-full w-full items-center justify-center overflow-hidden border-l bg-black select-none md:flex"
+            class="relative hidden h-full w-full items-center justify-center overflow-hidden border-l select-none md:flex"
           >
+            <Blurhash hash={loginImageBlurhash} class="absolute inset-0" />
             <enhanced:img
               src={loginImage}
               alt="graduation cap"
-              class="absolute inset-0 h-full w-full object-cover opacity-80"
+              class="absolute inset-0 h-full w-full object-cover"
               sizes="(min-width: 768px) 50vw, 0vw"
             />
           </div>

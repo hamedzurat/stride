@@ -6,6 +6,7 @@
   import { mode, toggleMode } from 'mode-watcher';
 
   import loginImage from '$lib/assets/forgot-password-image.jpg?enhanced';
+  import Blurhash from '$lib/components/ui/blurhash.svelte';
   import { Button } from '$lib/components/ui/button/index.js';
   import * as Card from '$lib/components/ui/card/index.js';
   import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
@@ -14,6 +15,8 @@
   import Translation from '$lib/components/ui/translation.svelte';
   import { m } from '$lib/paraglide/messages.js';
   import { getLocale, locales, setLocale } from '$lib/paraglide/runtime.js';
+
+  const forgotPasswordImageBlurhash = 'U36[BX0LI^-hIBRjx@M}03-.${E8~n%MD+%I';
 
   const localeLabels: Record<string, string> = {
     en: 'English',
@@ -84,12 +87,13 @@
           </form>
 
           <div
-            class="relative hidden h-full w-full items-center justify-center overflow-hidden border-l bg-black select-none md:flex"
+            class="relative hidden h-full w-full items-center justify-center overflow-hidden border-l select-none md:flex"
           >
+            <Blurhash hash={forgotPasswordImageBlurhash} class="absolute inset-0" />
             <enhanced:img
               src={loginImage}
               alt="Ballon with smilly face flying away"
-              class="absolute inset-0 h-full w-full object-cover opacity-80"
+              class="absolute inset-0 h-full w-full object-cover"
               sizes="(min-width: 768px) 50vw, 0vw"
             />
           </div>

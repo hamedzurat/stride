@@ -17,7 +17,8 @@
     "test:unit": "vitest",
     "test": "npm run test:unit -- --run",
     "knip": "knip",
-    "check:colors": "bun scripts/check-colors.ts"
+    "check:colors": "bun scripts/check-colors.ts",
+    "calculate:blurhash": "bun scripts/calculate-blurhash.ts"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.5.2",
@@ -50,6 +51,7 @@
     "@types/node": "^22",
     "@vitest/browser-playwright": "^4.1.0",
     "bits-ui": "^2.16.3",
+    "blurhash": "^2.0.5",
     "clsx": "^2.1.1",
     "concurrently": "^9.2.1",
     "embla-carousel-svelte": "^8.6.0",
@@ -73,6 +75,7 @@
     "prettier-plugin-svelte": "^3.5.1",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "shadcn-svelte": "^1.2.7",
+    "sharp": "^0.34.5",
     "shiki": "^4.0.2",
     "shiki-magic-move": "^1.3.0",
     "svelte": "^5.54.0",
