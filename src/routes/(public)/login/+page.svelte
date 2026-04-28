@@ -84,118 +84,120 @@
   }
 </script>
 
-<ContextMenu.Root>
-  <ContextMenu.Trigger>
-    <div class="flex min-h-svh flex-col items-center justify-center bg-muted p-6 md:p-10">
-      <div class="fixed top-4 right-4 z-50 flex items-center gap-2">
-        <Button variant="ghost" size="icon" onclick={toggleMode} class="rounded-full">
-          {#if mode.current === 'dark'}
-            <SunIcon class="size-5" />
-          {:else}
-            <MoonIcon class="size-5" />
-          {/if}
-          <span class="sr-only">{m.toggle_theme()}</span>
-        </Button>
-        <DropdownMenu.Root>
-          <DropdownMenu.Trigger>
-            {#snippet child({ props })}
-              <Button variant="ghost" size="icon" {...props} class="rounded-full">
-                <GlobeIcon class="size-5" />
-                <span class="sr-only">{m.toggle_language()}</span>
-              </Button>
-            {/snippet}
-          </DropdownMenu.Trigger>
-          <DropdownMenu.Content align="end">
-            {#each locales as locale (locale)}
-              <DropdownMenu.Item onclick={() => setLocale(locale)}>
-                {localeLabels[locale] ?? locale}
-                {#if getLocale() === locale}
-                  <CheckIcon class="ml-auto size-4" />
-                {/if}
-              </DropdownMenu.Item>
-            {/each}
-          </DropdownMenu.Content>
-        </DropdownMenu.Root>
-      </div>
-      <div class="w-full max-w-sm md:max-w-3xl">
-        <div class="flex flex-col gap-6">
-          <Card.Root class="overflow-hidden p-0">
-            <Card.Content class="grid min-h-[550px] p-0 md:grid-cols-2">
-              <form class="flex flex-col justify-center p-6 md:p-10" onsubmit={onSubmit}>
-                <FieldGroup>
-                  <div class="mb-6 flex flex-col items-center gap-2 text-center">
-                    <h1 class="text-3xl font-bold">{m.login_welcome()}</h1>
-                    <p class="text-balance text-muted-foreground">{m.login_subtitle()}</p>
-                  </div>
+<div class="flex min-h-svh flex-col items-center justify-center bg-muted p-6 md:p-10">
+  <div class="fixed top-4 right-4 z-50 flex items-center gap-2">
+    <Button variant="ghost" size="icon" onclick={toggleMode} class="rounded-full">
+      {#if mode.current === 'dark'}
+        <SunIcon class="size-5" />
+      {:else}
+        <MoonIcon class="size-5" />
+      {/if}
+      <span class="sr-only">{m.toggle_theme()}</span>
+    </Button>
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger>
+        {#snippet child({ props })}
+          <Button variant="ghost" size="icon" {...props} class="rounded-full">
+            <GlobeIcon class="size-5" />
+            <span class="sr-only">{m.toggle_language()}</span>
+          </Button>
+        {/snippet}
+      </DropdownMenu.Trigger>
+      <DropdownMenu.Content align="end">
+        {#each locales as locale (locale)}
+          <DropdownMenu.Item onclick={() => setLocale(locale)}>
+            {localeLabels[locale] ?? locale}
+            {#if getLocale() === locale}
+              <CheckIcon class="ml-auto size-4" />
+            {/if}
+          </DropdownMenu.Item>
+        {/each}
+      </DropdownMenu.Content>
+    </DropdownMenu.Root>
+  </div>
+  <div class="w-full max-w-sm md:max-w-3xl">
+    <div class="flex flex-col gap-6">
+      <Card.Root class="overflow-hidden p-0">
+        <Card.Content class="grid min-h-[550px] p-0 md:grid-cols-2">
+          <form class="flex flex-col justify-center p-6 md:p-10" onsubmit={onSubmit}>
+            <FieldGroup>
+              <div class="mb-6 flex flex-col items-center gap-2 text-center">
+                <h1 class="text-3xl font-bold">{m.login_welcome()}</h1>
+                <p class="text-balance text-muted-foreground">{m.login_subtitle()}</p>
+              </div>
+
+              <ContextMenu.Root>
+                <ContextMenu.Trigger>
                   <Field>
                     <FieldLabel for="email-{id}">{m.email()}</FieldLabel>
                     <Input id="email-{id}" type="email" placeholder="somik@uiu.ac.bd" required bind:value={email} />
                   </Field>
-                  <Field>
-                    <FieldLabel for="password-{id}">{m.password()}</FieldLabel>
-                    <Input id="password-{id}" type="password" required bind:value={password} />
-                  </Field>
-                  <Field>
-                    {#if error}
-                      <div class="mb-2 text-sm font-medium text-destructive">{error}</div>
-                    {/if}
-                    <Button type="submit" class="w-full" disabled={loading}>
-                      {#if loading}
-                        <Spinner class="mr-2 h-4 w-4" />
-                        {m.logging_in()}
-                      {:else}
-                        {m.login_button()}
-                      {/if}
-                    </Button>
-                  </Field>
-                  <div class="mt-4 text-center text-sm">
-                    <a href="/forgot-password" class="underline underline-offset-4 hover:text-primary">
-                      {m.forgot_password_link()}
-                    </a>
-                  </div>
-                </FieldGroup>
-              </form>
+                </ContextMenu.Trigger>
+                <ContextMenu.Content>
+                  <ContextMenu.Label>{m.debug_autofill()}</ContextMenu.Label>
+                  <ContextMenu.Separator />
+                  {#each credentials as cred (cred.email)}
+                    <ContextMenu.Item onSelect={() => autofill(cred.email, cred.password)}>
+                      {cred.label} - {cred.email}
+                    </ContextMenu.Item>
+                  {/each}
+                </ContextMenu.Content>
+              </ContextMenu.Root>
 
-              <div
-                class="relative hidden h-full w-full items-center justify-center overflow-hidden border-l bg-black select-none md:flex"
-              >
-                <enhanced:img
-                  src={loginImage}
-                  alt="graduation cap"
-                  class="absolute inset-0 h-full w-full object-cover opacity-80"
-                  sizes="(min-width: 768px) 50vw, 0vw"
-                />
+              <Field>
+                <FieldLabel for="password-{id}">{m.password()}</FieldLabel>
+                <Input id="password-{id}" type="password" required bind:value={password} />
+              </Field>
+              <Field>
+                {#if error}
+                  <div class="mb-2 text-sm font-medium text-destructive">{error}</div>
+                {/if}
+                <Button type="submit" class="w-full" disabled={loading}>
+                  {#if loading}
+                    <Spinner class="mr-2 h-4 w-4" />
+                    {m.logging_in()}
+                  {:else}
+                    {m.login_button()}
+                  {/if}
+                </Button>
+              </Field>
+              <div class="mt-4 text-center text-sm">
+                <a href="/forgot-password" class="underline underline-offset-4 hover:text-primary">
+                  {m.forgot_password_link()}
+                </a>
               </div>
-            </Card.Content>
-          </Card.Root>
+            </FieldGroup>
+          </form>
 
-          {#snippet termsLink()}
-            <a href="##" class="underline underline-offset-4 hover:text-primary">{m.terms_of_service()}</a>
-          {/snippet}
-          {#snippet privacyLink()}
-            <a href="##" class="underline underline-offset-4 hover:text-primary">{m.privacy_policy()}</a>
-          {/snippet}
-
-          <FieldDescription class="px-6 text-center">
-            <Translation
-              text={m.terms_agreement({ terms: '[[terms]]', privacy: '[[privacy]]' })}
-              map={{
-                '[[terms]]': termsLink,
-                '[[privacy]]': privacyLink,
-              }}
+          <div
+            class="relative hidden h-full w-full items-center justify-center overflow-hidden border-l bg-black select-none md:flex"
+          >
+            <enhanced:img
+              src={loginImage}
+              alt="graduation cap"
+              class="absolute inset-0 h-full w-full object-cover opacity-80"
+              sizes="(min-width: 768px) 50vw, 0vw"
             />
-          </FieldDescription>
-        </div>
-      </div>
+          </div>
+        </Card.Content>
+      </Card.Root>
+
+      {#snippet termsLink()}
+        <a href="##" class="underline underline-offset-4 hover:text-primary">{m.terms_of_service()}</a>
+      {/snippet}
+      {#snippet privacyLink()}
+        <a href="##" class="underline underline-offset-4 hover:text-primary">{m.privacy_policy()}</a>
+      {/snippet}
+
+      <FieldDescription class="px-6 text-center">
+        <Translation
+          text={m.terms_agreement({ terms: '[[terms]]', privacy: '[[privacy]]' })}
+          map={{
+            '[[terms]]': termsLink,
+            '[[privacy]]': privacyLink,
+          }}
+        />
+      </FieldDescription>
     </div>
-  </ContextMenu.Trigger>
-  <ContextMenu.Content>
-    <ContextMenu.Label>{m.debug_autofill()}</ContextMenu.Label>
-    <ContextMenu.Separator />
-    {#each credentials as cred (cred.email)}
-      <ContextMenu.Item onSelect={() => autofill(cred.email, cred.password)}>
-        {cred.label} - {cred.email}
-      </ContextMenu.Item>
-    {/each}
-  </ContextMenu.Content>
-</ContextMenu.Root>
+  </div>
+</div>
