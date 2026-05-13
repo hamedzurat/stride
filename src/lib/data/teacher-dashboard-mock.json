@@ -1,0 +1,86 @@
+{
+  "needsAttention": [
+    {
+      "_id": "attn7...1",
+      "studentName": "Fahim Faisal",
+      "studentId": "ju7...3",
+      "problemTitle": "Palindrome Checker",
+      "reason": "struggling",
+      "description": "5 failed attempts in the last hour.",
+      "timestamp": 1778330000000,
+      "severity": "high"
+    },
+    {
+      "_id": "attn7...2",
+      "studentName": "Rakibul Hasan",
+      "studentId": "ju7...4",
+      "problemTitle": "Lab 01: Variables",
+      "reason": "late",
+      "description": "Submission is 2 days overdue.",
+      "timestamp": 1778233600000,
+      "severity": "medium"
+    },
+    {
+      "_id": "attn7...3",
+      "studentName": "Sadia Tabassum",
+      "studentId": "ju7...5",
+      "problemTitle": "Midterm Exam",
+      "reason": "pending_review",
+      "description": "Requires manual grading for open-ended question.",
+      "timestamp": 1778416400000,
+      "severity": "low"
+    }
+  ],
+  "sectionPerformance": [
+    {
+      "sectionId": "js7...1",
+      "sectionName": "CSE 1111: SPL",
+      "averageScore": 78,
+      "passRate": 85,
+      "totalStudents": 45,
+      "activeActivities": 2
+    },
+    {
+      "sectionId": "js7...2",
+      "sectionName": "CSE 1115: OOP",
+      "averageScore": 82,
+      "passRate": 92,
+      "totalStudents": 38,
+      "activeActivities": 1
+    },
+    {
+      "sectionId": "js7...3",
+      "sectionName": "CSE 2215: DSA I",
+      "averageScore": 65,
+      "passRate": 70,
+      "totalStudents": 42,
+      "activeActivities": 3
+    }
+  ],
+  "upcomingActivities": [
+    {
+      "_id": "jd7...1",
+      "_creationTime": 1778330000000,
+      "title": "Lab 02: Array Manipulation",
+      "sectionId": "js7...1",
+      "sectionName": "CSE 1111: SPL",
+      "type": "class",
+      "startTime": 1778416400000,
+      "endTime": 1778423600000,
+      "updatedAt": 1778330000000,
+      "createdAt": 1778330000000
+    },
+    {
+      "_id": "jd7...2",
+      "_creationTime": 1778330000000,
+      "title": "Assignment 01: OOP Basics",
+      "sectionId": "js7...2",
+      "sectionName": "CSE 1115: OOP",
+      "type": "assignment",
+      "startTime": 1778589200000,
+      "endTime": 1778596400000,
+      "updatedAt": 1778330000000,
+      "createdAt": 1778330000000
+    }
+  ]
+}

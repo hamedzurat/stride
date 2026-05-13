@@ -5,27 +5,33 @@
 
   import ActivityCalendar from '$lib/components/dashboard/activity-calendar.svelte';
   import ForumHighlights from '$lib/components/dashboard/forum-highlights.svelte';
+  import NeedsAttention from '$lib/components/dashboard/needs-attention.svelte';
+  import PerformanceOverview from '$lib/components/dashboard/performance-overview.svelte';
   import QuickStats from '$lib/components/dashboard/quick-stats.svelte';
   import RecentSubmissions from '$lib/components/dashboard/recent-submissions.svelte';
+  import TeacherCalendar from '$lib/components/dashboard/teacher-calendar.svelte';
   import UpcomingActivities from '$lib/components/dashboard/upcoming-activities.svelte';
   import * as Avatar from '$lib/components/ui/avatar/index.js';
   import { Badge } from '$lib/components/ui/badge/index.js';
   import * as Card from '$lib/components/ui/card/index.js';
   import { Skeleton } from '$lib/components/ui/skeleton/index.js';
   import dashboardMockRaw from '$lib/data/dashboard-mock.json';
+  import teacherDashboardMockRaw from '$lib/data/teacher-dashboard-mock.json';
   import { session } from '$lib/session';
-  import type { DashboardMockData } from '$lib/types/dashboard';
+  import type { DashboardMockData, TeacherDashboardData } from '$lib/types/dashboard';
 
   const dashboardMock = dashboardMockRaw as unknown as DashboardMockData;
+  const teacherDashboardMock = teacherDashboardMockRaw as unknown as TeacherDashboardData;
 
   const userId = $derived($session?.userId);
+  const role = $derived($session?.role);
 
   const userQuery = useQuery(api.users.get, () => (userId ? { id: userId } : 'skip'));
   const studentSectionsQuery = useQuery(api.sections.listSectionsByStudent, () =>
-    userId && $session?.role === 'student' ? { studentId: userId } : 'skip',
+    userId && role === 'student' ? { studentId: userId } : 'skip',
   );
   const teacherSectionsQuery = useQuery(api.sections.listSectionsByTeacher, () =>
-    userId && $session?.role === 'teacher' ? { teacherId: userId } : 'skip',
+    userId && role === 'teacher' ? { teacherId: userId } : 'skip',
   );
 
   const user = $derived(userQuery.data);
@@ -60,51 +66,76 @@
     </Card.Content>
   </Card.Root>
 
-  <!-- Quick Stats -->
-  <QuickStats stats={dashboardMock.quickStats} />
+  <!-- Conditional Dashboard Content -->
+  {#if role === 'teacher'}
+    <!-- Teacher View -->
+    <PerformanceOverview performance={teacherDashboardMock.sectionPerformance} />
 
-  <!-- Main Content Grid -->
-  <div class="grid gap-8 lg:grid-cols-3">
-    <!-- Left: Activities & Sections -->
-    <div class="flex flex-col gap-8 lg:col-span-2">
-      <ActivityCalendar activities={dashboardMock.upcomingActivities} />
-      <div class="grid gap-8 md:grid-cols-2">
-        <UpcomingActivities activities={dashboardMock.upcomingActivities} />
-        <RecentSubmissions submissions={dashboardMock.recentSubmissions} />
+    <div class="grid gap-8 lg:grid-cols-3">
+      <div class="flex flex-col gap-8 lg:col-span-2">
+        <TeacherCalendar activities={teacherDashboardMock.upcomingActivities} />
+
+        <!-- Sections -->
+        <div>
+          <h2 class="mb-4 text-xl font-bold tracking-tight">Your Sections</h2>
+          <div class="grid gap-6 md:grid-cols-2">
+            {#if sections}
+              {#each sections as section (section?._id)}
+                {#if section}
+                  <Card.Root class="group transition-all hover:shadow-lg">
+                    <Card.Header>
+                      <Card.Title class="group-hover:text-primary">{section.name}</Card.Title>
+                      <Card.Description class="line-clamp-2">
+                        {section.aboutMd || 'No description provided.'}
+                      </Card.Description>
+                    </Card.Header>
+                    <Card.Footer>
+                      <a href="/sections/{section?._id}" class="text-sm font-bold text-primary hover:underline">
+                        Manage Section →
+                      </a>
+                    </Card.Footer>
+                  </Card.Root>
+                {/if}
+              {/each}
+            {:else if isLoading}
+              {#each [0, 1] as i (i)}
+                <Skeleton class="h-32 w-full rounded-2xl" />
+              {/each}
+            {/if}
+          </div>
+        </div>
       </div>
 
-      <!-- Sections -->
-      <div>
-        <h2 class="mb-4 text-xl font-semibold">
-          {#if $session?.role === 'teacher'}
-            Sections You Teach
-          {:else if $session?.role === 'student'}
-            Your Sections
-          {:else}
-            System Overview
-          {/if}
-        </h2>
-        <div class="grid gap-6 md:grid-cols-2">
-          {#if sections}
-            {#if sections.length === 0}
-              <div
-                class="col-span-full flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center"
-              >
-                <p class="text-lg font-medium text-muted-foreground">No sections found</p>
-                <p class="text-sm text-muted-foreground">You are not enrolled in any sections yet.</p>
-              </div>
-            {:else}
+      <!-- Right Column -->
+      <div class="flex flex-col gap-8">
+        <NeedsAttention items={teacherDashboardMock.needsAttention} />
+        <ForumHighlights highlights={dashboardMock.forumHighlights} />
+      </div>
+    </div>
+  {:else}
+    <!-- Student View (Default) -->
+    <QuickStats stats={dashboardMock.quickStats} />
+
+    <div class="grid gap-8 lg:grid-cols-3">
+      <div class="flex flex-col gap-8 lg:col-span-2">
+        <ActivityCalendar activities={dashboardMock.upcomingActivities} />
+        <div class="grid gap-8 md:grid-cols-2">
+          <UpcomingActivities activities={dashboardMock.upcomingActivities} />
+          <RecentSubmissions submissions={dashboardMock.recentSubmissions} />
+        </div>
+
+        <!-- Sections -->
+        <div>
+          <h2 class="mb-4 text-xl font-semibold">Your Sections</h2>
+          <div class="grid gap-6 md:grid-cols-2">
+            {#if sections}
               {#each sections as section (section?._id)}
                 {#if section}
                   <Card.Root class="transition-all hover:shadow-md">
                     <Card.Header>
                       <Card.Title>{section.name}</Card.Title>
                       <Card.Description class="line-clamp-2">
-                        {#if section.aboutMd}
-                          {section.aboutMd}
-                        {:else}
-                          No description provided.
-                        {/if}
+                        {section.aboutMd || 'No description provided.'}
                       </Card.Description>
                     </Card.Header>
                     <Card.Footer>
@@ -115,27 +146,18 @@
                   </Card.Root>
                 {/if}
               {/each}
+            {:else if isLoading}
+              {#each [0, 1] as i (i)}
+                <Skeleton class="h-32 w-full rounded-2xl" />
+              {/each}
             {/if}
-          {:else if isLoading}
-            {#each [0, 1] as i (i)}
-              <Card.Root>
-                <Card.Header class="gap-2">
-                  <Skeleton class="h-6 w-3/4" />
-                  <Skeleton class="h-4 w-full" />
-                </Card.Header>
-                <Card.Footer>
-                  <Skeleton class="h-4 w-24" />
-                </Card.Footer>
-              </Card.Root>
-            {/each}
-          {/if}
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Right: Community -->
-    <div class="flex flex-col gap-8">
-      <ForumHighlights highlights={dashboardMock.forumHighlights} />
+      <div class="flex flex-col gap-8">
+        <ForumHighlights highlights={dashboardMock.forumHighlights} />
+      </div>
     </div>
-  </div>
+  {/if}
 </div>
