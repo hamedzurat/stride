@@ -3,11 +3,20 @@
 
   import { api } from '$convex/_generated/api.js';
 
+  import ActivityCalendar from '$lib/components/dashboard/activity-calendar.svelte';
+  import ForumHighlights from '$lib/components/dashboard/forum-highlights.svelte';
+  import QuickStats from '$lib/components/dashboard/quick-stats.svelte';
+  import RecentSubmissions from '$lib/components/dashboard/recent-submissions.svelte';
+  import UpcomingActivities from '$lib/components/dashboard/upcoming-activities.svelte';
   import * as Avatar from '$lib/components/ui/avatar/index.js';
   import { Badge } from '$lib/components/ui/badge/index.js';
   import * as Card from '$lib/components/ui/card/index.js';
   import { Skeleton } from '$lib/components/ui/skeleton/index.js';
+  import dashboardMockRaw from '$lib/data/dashboard-mock.json';
   import { session } from '$lib/session';
+  import type { DashboardMockData } from '$lib/types/dashboard';
+
+  const dashboardMock = dashboardMockRaw as unknown as DashboardMockData;
 
   const userId = $derived($session?.userId);
 
@@ -22,9 +31,10 @@
   const user = $derived(userQuery.data);
   const sections = $derived(studentSectionsQuery.data || teacherSectionsQuery.data);
   const isLoading = $derived(userQuery.isLoading || studentSectionsQuery.isLoading || teacherSectionsQuery.isLoading);
+  // Force rebuild for latest dashboard-mock.json changes
 </script>
 
-<div class="flex flex-col gap-8">
+<div class="flex flex-col gap-8 p-4">
   <!-- Welcome Section -->
   <Card.Root>
     <Card.Content class="flex items-center gap-6 p-6">
@@ -50,62 +60,82 @@
     </Card.Content>
   </Card.Root>
 
-  <!-- Content Section -->
-  <div>
-    <h2 class="mb-4 text-xl font-semibold">
-      {#if $session?.role === 'teacher'}
-        Sections You Teach
-      {:else if $session?.role === 'student'}
-        Your Sections
-      {:else}
-        System Overview
-      {/if}
-    </h2>
-    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      {#if sections}
-        {#if sections.length === 0}
-          <div
-            class="col-span-full flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center"
-          >
-            <p class="text-lg font-medium text-muted-foreground">No sections found</p>
-            <p class="text-sm text-muted-foreground">You are not enrolled in any sections yet.</p>
-          </div>
-        {:else}
-          {#each sections as section (section?._id)}
-            {#if section}
-              <Card.Root class="transition-all hover:shadow-md">
-                <Card.Header>
-                  <Card.Title>{section.name}</Card.Title>
-                  <Card.Description class="line-clamp-2">
-                    {#if section.aboutMd}
-                      {section.aboutMd}
-                    {:else}
-                      No description provided.
-                    {/if}
-                  </Card.Description>
+  <!-- Quick Stats -->
+  <QuickStats stats={dashboardMock.quickStats} />
+
+  <!-- Main Content Grid -->
+  <div class="grid gap-8 lg:grid-cols-3">
+    <!-- Left: Activities & Sections -->
+    <div class="flex flex-col gap-8 lg:col-span-2">
+      <ActivityCalendar activities={dashboardMock.upcomingActivities} />
+      <div class="grid gap-8 md:grid-cols-2">
+        <UpcomingActivities activities={dashboardMock.upcomingActivities} />
+        <RecentSubmissions submissions={dashboardMock.recentSubmissions} />
+      </div>
+
+      <!-- Sections -->
+      <div>
+        <h2 class="mb-4 text-xl font-semibold">
+          {#if $session?.role === 'teacher'}
+            Sections You Teach
+          {:else if $session?.role === 'student'}
+            Your Sections
+          {:else}
+            System Overview
+          {/if}
+        </h2>
+        <div class="grid gap-6 md:grid-cols-2">
+          {#if sections}
+            {#if sections.length === 0}
+              <div
+                class="col-span-full flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center"
+              >
+                <p class="text-lg font-medium text-muted-foreground">No sections found</p>
+                <p class="text-sm text-muted-foreground">You are not enrolled in any sections yet.</p>
+              </div>
+            {:else}
+              {#each sections as section (section?._id)}
+                {#if section}
+                  <Card.Root class="transition-all hover:shadow-md">
+                    <Card.Header>
+                      <Card.Title>{section.name}</Card.Title>
+                      <Card.Description class="line-clamp-2">
+                        {#if section.aboutMd}
+                          {section.aboutMd}
+                        {:else}
+                          No description provided.
+                        {/if}
+                      </Card.Description>
+                    </Card.Header>
+                    <Card.Footer>
+                      <a href="/sections/{section?._id}" class="text-sm font-medium text-primary hover:underline">
+                        View Section details →
+                      </a>
+                    </Card.Footer>
+                  </Card.Root>
+                {/if}
+              {/each}
+            {/if}
+          {:else if isLoading}
+            {#each [0, 1] as i (i)}
+              <Card.Root>
+                <Card.Header class="gap-2">
+                  <Skeleton class="h-6 w-3/4" />
+                  <Skeleton class="h-4 w-full" />
                 </Card.Header>
                 <Card.Footer>
-                  <a href="/sections/{section?._id}" class="text-sm font-medium text-primary hover:underline">
-                    View Section details →
-                  </a>
+                  <Skeleton class="h-4 w-24" />
                 </Card.Footer>
               </Card.Root>
-            {/if}
-          {/each}
-        {/if}
-      {:else if isLoading}
-        {#each [0, 1, 2] as i (i)}
-          <Card.Root>
-            <Card.Header class="gap-2">
-              <Skeleton class="h-6 w-3/4" />
-              <Skeleton class="h-4 w-full" />
-            </Card.Header>
-            <Card.Footer>
-              <Skeleton class="h-4 w-24" />
-            </Card.Footer>
-          </Card.Root>
-        {/each}
-      {/if}
+            {/each}
+          {/if}
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Community -->
+    <div class="flex flex-col gap-8">
+      <ForumHighlights highlights={dashboardMock.forumHighlights} />
     </div>
   </div>
 </div>

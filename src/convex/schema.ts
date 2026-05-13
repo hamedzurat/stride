@@ -43,7 +43,7 @@ export default defineSchema({
     title: v.string(),
     startTime: v.number(),
     endTime: v.number(),
-    type: v.union(v.literal('exam'), v.literal('class')),
+    type: v.union(v.literal('exam'), v.literal('class'), v.literal('assignment')),
     createdAt: v.number(),
     updatedAt: v.number(),
   }).index('by_section', ['sectionId']),

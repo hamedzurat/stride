@@ -8,7 +8,7 @@ import { env } from '$env/dynamic/private';
 // ─── Config ─────────────────────────────────────────────────────────────────
 
 export function getJudge0BaseUrl(): string {
-  const url = env.JUDGE0_URL;
+  const url = env.JUDGE0_URL ?? 'http://localhost:2358';
   return url.replace(/\/$/, ''); // strip trailing slash
 }
 

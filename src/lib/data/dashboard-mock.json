@@ -1,0 +1,87 @@
+{
+  "forumHighlights": [
+    {
+      "_id": "jpost7...1",
+      "_creationTime": 1778310000000,
+      "authorId": "ju7...2",
+      "authorName": "Asnuva Tanvin",
+      "contentMd": "Please review the slides on multidimensional arrays before tomorrow's lab...",
+      "createdAt": 1778310000000,
+      "updatedAt": 1778310000000,
+      "commentCount": 5
+    }
+  ],
+  "quickStats": [
+    { "label": "Enrolled Sections", "value": 3, "icon": "Layers" },
+    { "label": "Total Submissions", "value": 12, "icon": "Code" },
+    { "label": "Completed Tasks", "value": 8, "icon": "CheckCircle" },
+    { "label": "Pending Tasks", "value": 2, "icon": "Clock" }
+  ],
+  "recentSubmissions": [
+    {
+      "_id": "jsub7...1",
+      "_creationTime": 1778320000000,
+      "authorId": "ju7...1",
+      "problemId": "jp7...1",
+      "problemTitle": "Sum of Two Integers",
+      "activityId": "act7...1",
+      "activityTitle": "Lab 01",
+      "content": "print(a+b)",
+      "submittedAt": 1778320000000,
+      "judgeVerdict": "Accepted",
+      "languageId": 71
+    },
+    {
+      "_id": "jsub7...2",
+      "_creationTime": 1778233600000,
+      "authorId": "ju7...1",
+      "problemId": "jp7...2",
+      "problemTitle": "Palindrome Checker",
+      "activityId": "act7...2",
+      "activityTitle": "Midterm Prep",
+      "content": "is_palindrome(s)",
+      "submittedAt": 1778233600000,
+      "judgeVerdict": "Wrong Answer",
+      "languageId": 71
+    }
+  ],
+  "role": "student",
+  "upcomingActivities": [
+    {
+      "_id": "jd7...1",
+      "_creationTime": 1778330000000,
+      "title": "Lab 02: Array Manipulation",
+      "sectionId": "js7...1",
+      "sectionName": "CSE 1111: SPL",
+      "type": "class",
+      "startTime": 1778416400000,
+      "endTime": 1778423600000,
+      "updatedAt": 1778330000000,
+      "createdAt": 1778330000000
+    },
+    {
+      "_id": "jd7...3",
+      "_creationTime": 1778330000000,
+      "title": "Assignment 01: Complexity Analysis",
+      "sectionId": "js7...2",
+      "sectionName": "CSE 2215: DSA",
+      "type": "assignment",
+      "startTime": 1778502800000,
+      "endTime": 1778510000000,
+      "updatedAt": 1778330000000,
+      "createdAt": 1778330000000
+    },
+    {
+      "_id": "jd7...2",
+      "_creationTime": 1778330000000,
+      "title": "Midterm Exam: OOP Principles",
+      "sectionId": "js7...2",
+      "sectionName": "CSE 1115: OOP",
+      "type": "exam",
+      "startTime": 1778589200000,
+      "endTime": 1778596400000,
+      "updatedAt": 1778330000000,
+      "createdAt": 1778330000000
+    }
+  ]
+}
