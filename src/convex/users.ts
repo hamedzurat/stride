@@ -30,6 +30,13 @@ export const login = mutation({
   },
 });
 
+export const list = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query('users').collect();
+  },
+});
+
 export const listByRole = query({
   args: {
     role: v.union(v.literal('admin'), v.literal('teacher'), v.literal('student')),
@@ -77,6 +84,21 @@ export const updatePassword = mutation({
   },
   handler: async (ctx, { id, passwordHash }) => {
     await ctx.db.patch(id, { passwordHash, updatedAt: Date.now() });
+  },
+});
+
+export const update = mutation({
+  args: {
+    id: v.id('users'),
+    name: v.optional(v.string()),
+    email: v.optional(v.string()),
+    role: v.optional(v.union(v.literal('admin'), v.literal('teacher'), v.literal('student'))),
+    aboutMd: v.optional(v.string()),
+    avatarUrl: v.optional(v.string()),
+  },
+  handler: async (ctx, { id, ...fields }) => {
+    const patch = Object.fromEntries(Object.entries(fields).filter(([, v]) => v !== undefined));
+    await ctx.db.patch(id, { ...patch, updatedAt: Date.now() });
   },
 });
 
