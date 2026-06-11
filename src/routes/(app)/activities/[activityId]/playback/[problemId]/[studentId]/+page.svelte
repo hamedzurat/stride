@@ -206,7 +206,9 @@
   });
 
   function heatmapColor(t: number): string {
-    return `hsl(${Math.round(25 - t * 25)}, 85%, ${Math.round(55 - t * 20)}%)`;
+    const e = Math.pow(t, 2.5);
+    const alpha = 0.15 + e * 0.85; // floor 0.15, max 1.0
+    return `hsla(${Math.round(25 - e * 25)}, 85%, ${Math.round(55 - e * 20)}%, ${alpha.toFixed(3)})`;
   }
 
   function heatmapGradient(mags: number[]): string {
