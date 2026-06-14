@@ -1,9 +1,12 @@
 <script lang="ts">
+  import { Experimental_StructuredObject } from '@ai-sdk/svelte';
   import Plus from '@lucide/svelte/icons/plus';
+  import Sparkles from '@lucide/svelte/icons/sparkles';
   import Trash2 from '@lucide/svelte/icons/trash-2';
   import { useConvexClient } from 'convex-svelte';
   import { toast } from 'svelte-sonner';
   import { slide } from 'svelte/transition';
+  import { z } from 'zod';
 
   import { goto } from '$app/navigation';
   import { api } from '$convex/_generated/api.js';
@@ -25,9 +28,47 @@
   let title = $state('');
   let contentMd = $state('');
   let isSubmitting = $state(false);
+  let editorKey = $state(0);
 
   // Local Test Cases State
   let testCases = $state<{ inputData: string; outputData: string }[]>([]);
+
+  // AI Streaming State
+  const problemGenerator = new Experimental_StructuredObject({
+    api: '/api/ai/generate-problem',
+    schema: z.object({
+      title: z.string(),
+      contentMd: z.string(),
+      testCases: z.array(
+        z.object({
+          inputData: z.string(),
+          outputData: z.string(),
+        }),
+      ),
+    }),
+    onFinish: (result) => {
+      if (result.object) {
+        title = result.object.title || '';
+        contentMd = result.object.contentMd || '';
+        testCases = result.object.testCases || [];
+        editorKey++;
+        toast.success('AI Problem generated successfully!');
+      }
+    },
+    onError: (err) => {
+      toast.error(err.message || 'Error communicating with AI generator.');
+    },
+  });
+
+  let displayTitle = $derived(problemGenerator.loading ? (problemGenerator.object?.title ?? title) : title);
+  let displayTestCases = $derived(
+    problemGenerator.loading
+      ? (problemGenerator.object?.testCases ?? []).map((tc) => ({
+          inputData: tc?.inputData ?? '',
+          outputData: tc?.outputData ?? '',
+        }))
+      : testCases,
+  );
   let newCaseInput = $state('');
   let newCaseOutput = $state('');
 
@@ -45,6 +86,15 @@
 
   function removeLocalTestCase(index: number) {
     testCases = testCases.filter((_, i) => i !== index);
+  }
+
+  async function generateProblem() {
+    const plainText = contentMd.replace(/<[^>]*>/g, '').trim();
+    if (!plainText) {
+      return toast.error('Please write a short prompt in the description first.');
+    }
+
+    problemGenerator.submit({ prompt: plainText, currentTitle: title });
   }
 
   async function handleSubmit(e: Event) {
@@ -104,10 +154,28 @@
 
       <!-- Problem Details Form -->
       <Card.Root class="border bg-card/45 shadow-sm backdrop-blur-md">
-        <Card.Header class="p-6">
-          <Card.Title class="text-lg font-bold tracking-tight">Problem Details</Card.Title>
-          <Card.Description>Provide a concise title and clear details about the algorithmic challenge.</Card.Description
+        <Card.Header class="flex flex-row items-center justify-between space-y-0 p-6">
+          <div class="flex flex-col gap-1.5">
+            <Card.Title class="text-lg font-bold tracking-tight">Problem Details</Card.Title>
+            <Card.Description
+              >Provide a concise title and clear details about the algorithmic challenge.</Card.Description
+            >
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            class="gap-1.5"
+            disabled={problemGenerator.loading}
+            onclick={generateProblem}
           >
+            {#if problemGenerator.loading}
+              <Spinner class="size-4" />
+            {:else}
+              <Sparkles class="h-4 w-4" />
+            {/if}
+            Generate Problem
+          </Button>
         </Card.Header>
         <Separator />
         <Card.Content class="p-6">
@@ -120,9 +188,11 @@
               <Input
                 id="prob-title"
                 placeholder="e.g. Reverse a Linked List..."
-                bind:value={title}
+                value={displayTitle}
+                oninput={(e: any) => (title = e.currentTarget.value)}
                 maxlength={150}
                 required
+                disabled={problemGenerator.loading}
                 class="border-primary/20 text-sm focus-visible:ring-primary/30"
               />
             </div>
@@ -132,7 +202,17 @@
               <Label for="prob-desc" class="text-xs font-bold tracking-wider text-muted-foreground uppercase"
                 >Problem Description</Label
               >
-              <Tiptap initialContent={contentMd} onUpdate={(html: string) => (contentMd = html)} />
+              {#if problemGenerator.loading}
+                <div
+                  class="prose prose-sm min-h-[150px] w-full max-w-full cursor-not-allowed rounded-md border border-input bg-background px-3 py-2 text-sm opacity-50 shadow-sm dark:prose-invert"
+                >
+                  {@html problemGenerator.object?.contentMd || ''}
+                </div>
+              {:else}
+                {#key editorKey}
+                  <Tiptap initialContent={contentMd} onUpdate={(html: string) => (contentMd = html)} />
+                {/key}
+              {/if}
             </div>
           </div>
         </Card.Content>
@@ -148,13 +228,13 @@
 
         <Card.Content class="flex flex-col gap-6 p-6">
           <!-- Locally added test cases list -->
-          {#if testCases.length === 0}
+          {#if displayTestCases.length === 0}
             <div class="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground italic">
               No test cases added to this suite yet. Formulate case details below.
             </div>
           {:else}
             <div class="flex flex-col gap-4">
-              {#each testCases as tc, idx (idx)}
+              {#each displayTestCases as tc, idx (idx)}
                 <div
                   class="flex flex-col gap-3 rounded-xl border bg-muted/10 p-4 transition-all duration-200 hover:border-primary/30"
                   transition:slide

@@ -124,8 +124,13 @@
     "vitest-browser-svelte": "^2.0.2"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^3.0.71",
+    "@ai-sdk/svelte": "^4.0.205",
+    "ai": "^6.0.205",
     "convex": "^1.39.1",
-    "convex-svelte": "^0.0.12"
+    "convex-svelte": "^0.0.12",
+    "openai": "^6.42.0",
+    "zod": "^4.4.3"
   },
   "overrides": {
     "@codemirror/view": "$@codemirror/view"
