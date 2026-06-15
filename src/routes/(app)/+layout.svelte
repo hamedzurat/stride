@@ -7,6 +7,7 @@
   import { api } from '$convex/_generated/api.js';
 
   import AppSidebar from '$lib/components/app-sidebar.svelte';
+  import CommandPalette from '$lib/components/command-palette.svelte';
   import ScreenShareManager from '$lib/components/screen-share-manager.svelte';
   import * as Sidebar from '$lib/components/ui/sidebar/index.js';
   import { loadSession, session } from '$lib/session';
@@ -103,6 +104,8 @@
     </div>
   </Sidebar.Inset>
 </Sidebar.Provider>
+
+<CommandPalette />
 
 {#if currentSession?.role === 'student'}
   <ScreenShareManager />
