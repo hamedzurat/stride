@@ -9,13 +9,36 @@
 
   import { Toaster } from '$lib/components/ui/sonner/index.js';
   import { locales, localizeHref } from '$lib/paraglide/runtime';
+  import { brandLabels, initBrand, setBrand, type Brand } from '$lib/stores/brand.svelte';
 
   import './layout.css';
+
+  import { toast } from 'svelte-sonner';
 
   import favicon from '$lib/assets/favicon.svg';
 
   let { children } = $props();
   setupConvex(PUBLIC_CONVEX_URL);
+
+  initBrand();
+
+  function handleKeydown(e: KeyboardEvent) {
+    if (!e.altKey) return;
+    const map: Record<string, Brand> = {
+      '1': 'default',
+      '2': 'ocean',
+      '3': 'forest',
+      '4': 'violet',
+      '5': 'ruby',
+      '6': 'slate',
+    };
+    const brand = map[e.key];
+    if (brand) {
+      e.preventDefault();
+      setBrand(brand);
+      toast.success(`${brandLabels[brand]}`, { description: 'Brand theme applied', duration: 2000 });
+    }
+  }
 
   onNavigate((navigation) => {
     const from = navigation.from?.url?.pathname;
@@ -63,6 +86,8 @@
 
 <ModeWatcher />
 <Toaster />
+
+<svelte:window onkeydown={handleKeydown} />
 
 {@render children()}
 
