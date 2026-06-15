@@ -74,6 +74,31 @@
     'var(--color-muted-foreground)',
   ];
 
+  const pieColors = [
+    'var(--color-chart-1)',
+    'var(--color-chart-2)',
+    'var(--color-chart-3)',
+    'var(--color-chart-4)',
+    'var(--color-chart-5)',
+    'var(--color-chart-6)',
+    'var(--color-chart-7)',
+    'var(--color-chart-8)',
+  ];
+
+  const coloredRoles = $derived(
+    dashboardData?.charts?.roleDistribution?.map((d, i) => ({
+      ...d,
+      color: pieColors[i % pieColors.length],
+    })) ?? [],
+  );
+
+  const coloredVerdicts = $derived(
+    dashboardData?.charts?.verdictDistribution?.map((d, i) => ({
+      ...d,
+      color: pieColors[i % pieColors.length],
+    })) ?? [],
+  );
+
   // --- ArcChart series builders ---
   const adminArcSeries = $derived(
     dashboardData?.charts?.roleDistribution?.map((d, i) => ({
@@ -281,7 +306,12 @@
         <Card.Root class="border-border bg-card transition-all hover:shadow-sm">
           <Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
             <Card.Title class="text-xs font-bold text-muted-foreground uppercase">Total Users</Card.Title>
-            <div class="rounded-full bg-sky-500/10 p-1.5 text-sky-500"><Users class="h-4 w-4" /></div>
+            <div
+              class="rounded-full p-1.5"
+              style="background: color-mix(in oklch, var(--color-chart-1), transparent 90%); color: var(--color-chart-1)"
+            >
+              <Users class="h-4 w-4" />
+            </div>
           </Card.Header>
           <Card.Content>
             <div class="text-2xl font-bold text-foreground">{dashboardData.stats.totalUsers}</div>
@@ -292,7 +322,12 @@
         <Card.Root class="border-border bg-card transition-all hover:shadow-sm">
           <Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
             <Card.Title class="text-xs font-bold text-muted-foreground uppercase">Problems</Card.Title>
-            <div class="rounded-full bg-emerald-500/10 p-1.5 text-emerald-500"><BookOpen class="h-4 w-4" /></div>
+            <div
+              class="rounded-full p-1.5"
+              style="background: color-mix(in oklch, var(--color-chart-2), transparent 90%); color: var(--color-chart-2)"
+            >
+              <BookOpen class="h-4 w-4" />
+            </div>
           </Card.Header>
           <Card.Content>
             <div class="text-2xl font-bold text-foreground">{dashboardData.stats.totalProblems}</div>
@@ -303,7 +338,12 @@
         <Card.Root class="border-border bg-card transition-all hover:shadow-sm">
           <Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
             <Card.Title class="text-xs font-bold text-muted-foreground uppercase">Messages</Card.Title>
-            <div class="rounded-full bg-violet-500/10 p-1.5 text-violet-500"><MessageSquare class="h-4 w-4" /></div>
+            <div
+              class="rounded-full p-1.5"
+              style="background: color-mix(in oklch, var(--color-chart-3), transparent 90%); color: var(--color-chart-3)"
+            >
+              <MessageSquare class="h-4 w-4" />
+            </div>
           </Card.Header>
           <Card.Content>
             <div class="text-2xl font-bold text-foreground">{dashboardData.stats.totalMessages}</div>
@@ -314,7 +354,12 @@
         <Card.Root class="border-border bg-card transition-all hover:shadow-sm">
           <Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
             <Card.Title class="text-xs font-bold text-muted-foreground uppercase">Comments</Card.Title>
-            <div class="rounded-full bg-amber-500/10 p-1.5 text-amber-500"><MessageSquare class="h-4 w-4" /></div>
+            <div
+              class="rounded-full p-1.5"
+              style="background: color-mix(in oklch, var(--color-chart-4), transparent 90%); color: var(--color-chart-4)"
+            >
+              <MessageSquare class="h-4 w-4" />
+            </div>
           </Card.Header>
           <Card.Content>
             <div class="text-2xl font-bold text-foreground">{dashboardData.stats.totalComments}</div>
@@ -325,7 +370,12 @@
         <Card.Root class="border-border bg-card transition-all hover:shadow-sm">
           <Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
             <Card.Title class="text-xs font-bold text-muted-foreground uppercase">Activities</Card.Title>
-            <div class="rounded-full bg-rose-500/10 p-1.5 text-rose-500"><Calendar class="h-4 w-4" /></div>
+            <div
+              class="rounded-full p-1.5"
+              style="background: color-mix(in oklch, var(--color-chart-5), transparent 90%); color: var(--color-chart-5)"
+            >
+              <Calendar class="h-4 w-4" />
+            </div>
           </Card.Header>
           <Card.Content>
             <div class="text-2xl font-bold text-foreground">{dashboardData.stats.totalActivities}</div>
@@ -336,7 +386,12 @@
         <Card.Root class="border-border bg-card transition-all hover:shadow-sm">
           <Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
             <Card.Title class="text-xs font-bold text-muted-foreground uppercase">Resources</Card.Title>
-            <div class="rounded-full bg-indigo-500/10 p-1.5 text-indigo-500"><FileText class="h-4 w-4" /></div>
+            <div
+              class="rounded-full p-1.5"
+              style="background: color-mix(in oklch, var(--color-chart-1), transparent 90%); color: var(--color-chart-1)"
+            >
+              <FileText class="h-4 w-4" />
+            </div>
           </Card.Header>
           <Card.Content>
             <div class="text-2xl font-bold text-foreground">{dashboardData.stats.totalResources}</div>
@@ -358,9 +413,10 @@
             {#if dashboardData.charts.roleDistribution && dashboardData.charts.roleDistribution.length > 0}
               <div class="flex h-[250px] w-full items-center justify-center">
                 <PieChart
-                  data={dashboardData.charts.roleDistribution}
+                  data={coloredRoles}
                   key="name"
                   value="value"
+                  c="color"
                   innerRadius={0.6}
                   cornerRadius={4}
                   padAngle={0.02}
@@ -408,7 +464,13 @@
           <Card.Content>
             {#if dashboardData.charts.submissionTrend && dashboardData.charts.submissionTrend.length > 0}
               <div class="h-[250px] w-full">
-                <AreaChart data={dashboardData.charts.submissionTrend} x="date" y="count" height={220} />
+                <AreaChart
+                  data={dashboardData.charts.submissionTrend}
+                  x="date"
+                  y="count"
+                  height={220}
+                  c="var(--color-chart-1)"
+                />
               </div>
             {:else}
               <div class="flex h-[250px] items-center justify-center text-xs text-muted-foreground">
@@ -588,9 +650,10 @@
             {#if dashboardData.charts.verdictDistribution && dashboardData.charts.verdictDistribution.length > 0}
               <div class="flex h-[250px] w-full items-center justify-center">
                 <PieChart
-                  data={dashboardData.charts.verdictDistribution}
+                  data={coloredVerdicts}
                   key="name"
                   value="value"
+                  c="color"
                   innerRadius={0.6}
                   cornerRadius={4}
                   padAngle={0.02}
@@ -638,7 +701,13 @@
           <Card.Content>
             {#if dashboardData.charts.submissionTrend && dashboardData.charts.submissionTrend.length > 0}
               <div class="h-[250px] w-full">
-                <AreaChart data={dashboardData.charts.submissionTrend} x="date" y="count" height={220} />
+                <AreaChart
+                  data={dashboardData.charts.submissionTrend}
+                  x="date"
+                  y="count"
+                  height={220}
+                  c="var(--color-chart-1)"
+                />
               </div>
             {:else}
               <div class="flex h-[250px] items-center justify-center text-xs text-muted-foreground">
@@ -765,7 +834,12 @@
         <Card.Root class="border-border bg-card transition-all hover:shadow-sm">
           <Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
             <Card.Title class="text-xs font-bold text-muted-foreground uppercase">Enrolled Courses</Card.Title>
-            <div class="rounded-full bg-indigo-500/10 p-1.5 text-indigo-500"><Layers class="h-4 w-4" /></div>
+            <div
+              class="rounded-full p-1.5"
+              style="background: color-mix(in oklch, var(--color-chart-1), transparent 90%); color: var(--color-chart-1)"
+            >
+              <Layers class="h-4 w-4" />
+            </div>
           </Card.Header>
           <Card.Content>
             <div class="text-2xl font-bold text-foreground">{dashboardData.stats.enrolledSections}</div>
@@ -776,7 +850,12 @@
         <Card.Root class="border-border bg-card transition-all hover:shadow-sm">
           <Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
             <Card.Title class="text-xs font-bold text-muted-foreground uppercase">Submissions Made</Card.Title>
-            <div class="rounded-full bg-blue-500/10 p-1.5 text-blue-500"><FileText class="h-4 w-4" /></div>
+            <div
+              class="rounded-full p-1.5"
+              style="background: color-mix(in oklch, var(--color-chart-2), transparent 90%); color: var(--color-chart-2)"
+            >
+              <FileText class="h-4 w-4" />
+            </div>
           </Card.Header>
           <Card.Content>
             <div class="text-2xl font-bold text-foreground">{dashboardData.stats.totalSubmissions}</div>
@@ -787,7 +866,12 @@
         <Card.Root class="border-border bg-card transition-all hover:shadow-sm">
           <Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
             <Card.Title class="text-xs font-bold text-muted-foreground uppercase">Solved Problems</Card.Title>
-            <div class="rounded-full bg-emerald-500/10 p-1.5 text-emerald-500"><Award class="h-4 w-4" /></div>
+            <div
+              class="rounded-full p-1.5"
+              style="background: color-mix(in oklch, var(--color-chart-3), transparent 90%); color: var(--color-chart-3)"
+            >
+              <Award class="h-4 w-4" />
+            </div>
           </Card.Header>
           <Card.Content>
             <div class="text-2xl font-bold text-foreground">{dashboardData.stats.acceptedSubmissions}</div>
@@ -798,7 +882,12 @@
         <Card.Root class="border-border bg-card transition-all hover:shadow-sm">
           <Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
             <Card.Title class="text-xs font-bold text-muted-foreground uppercase">Upcoming Tasks</Card.Title>
-            <div class="rounded-full bg-amber-500/10 p-1.5 text-amber-500"><Activity class="h-4 w-4" /></div>
+            <div
+              class="rounded-full p-1.5"
+              style="background: color-mix(in oklch, var(--color-chart-4), transparent 90%); color: var(--color-chart-4)"
+            >
+              <Activity class="h-4 w-4" />
+            </div>
           </Card.Header>
           <Card.Content>
             <div class="text-2xl font-bold text-foreground">{dashboardData.stats.upcomingActivitiesCount}</div>
@@ -812,7 +901,12 @@
         <Card.Root class="border-border bg-card transition-all hover:shadow-sm">
           <Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
             <Card.Title class="text-xs font-bold text-muted-foreground uppercase">Day Streak</Card.Title>
-            <div class="rounded-full bg-rose-500/10 p-1.5 text-rose-500"><Zap class="h-4 w-4" /></div>
+            <div
+              class="rounded-full p-1.5"
+              style="background: color-mix(in oklch, var(--color-chart-5), transparent 90%); color: var(--color-chart-5)"
+            >
+              <Zap class="h-4 w-4" />
+            </div>
           </Card.Header>
           <Card.Content>
             <div class="flex items-baseline gap-1">
@@ -826,7 +920,12 @@
         <Card.Root class="border-border bg-card transition-all hover:shadow-sm">
           <Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
             <Card.Title class="text-xs font-bold text-muted-foreground uppercase">This Week</Card.Title>
-            <div class="rounded-full bg-violet-500/10 p-1.5 text-violet-500"><TrendingUp class="h-4 w-4" /></div>
+            <div
+              class="rounded-full p-1.5"
+              style="background: color-mix(in oklch, var(--color-chart-1), transparent 90%); color: var(--color-chart-1)"
+            >
+              <TrendingUp class="h-4 w-4" />
+            </div>
           </Card.Header>
           <Card.Content>
             <div class="flex items-baseline gap-1">
@@ -840,7 +939,12 @@
         <Card.Root class="border-border bg-card transition-all hover:shadow-sm">
           <Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
             <Card.Title class="text-xs font-bold text-muted-foreground uppercase">Comments</Card.Title>
-            <div class="rounded-full bg-cyan-500/10 p-1.5 text-cyan-500"><MessageSquare class="h-4 w-4" /></div>
+            <div
+              class="rounded-full p-1.5"
+              style="background: color-mix(in oklch, var(--color-chart-2), transparent 90%); color: var(--color-chart-2)"
+            >
+              <MessageSquare class="h-4 w-4" />
+            </div>
           </Card.Header>
           <Card.Content>
             <div class="text-2xl font-bold text-foreground">{dashboardData.stats.totalComments}</div>
@@ -851,7 +955,12 @@
         <Card.Root class="border-border bg-card transition-all hover:shadow-sm">
           <Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
             <Card.Title class="text-xs font-bold text-muted-foreground uppercase">Snapshots</Card.Title>
-            <div class="rounded-full bg-orange-500/10 p-1.5 text-orange-500"><Save class="h-4 w-4" /></div>
+            <div
+              class="rounded-full p-1.5"
+              style="background: color-mix(in oklch, var(--color-chart-4), transparent 90%); color: var(--color-chart-4)"
+            >
+              <Save class="h-4 w-4" />
+            </div>
           </Card.Header>
           <Card.Content>
             <div class="text-2xl font-bold text-foreground">{dashboardData.stats.totalSnapshots}</div>
@@ -912,7 +1021,13 @@
                 <BarChart data={coloredTrend} x="date" y="count" c="barColor" bandPadding={0.3} />
               </div>
               <div class="h-[100px] w-full">
-                <AreaChart data={dashboardData.charts.submissionTrend} x="date" y="count" height={80} />
+                <AreaChart
+                  data={dashboardData.charts.submissionTrend}
+                  x="date"
+                  y="count"
+                  height={80}
+                  c="var(--color-chart-1)"
+                />
               </div>
             {:else}
               <div class="flex h-[250px] items-center justify-center text-xs text-muted-foreground">
