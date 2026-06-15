@@ -25,6 +25,8 @@
     "seed": "convex run seed"
   },
   "devDependencies": {
+    "@ai-sdk/openai": "^3.0.71",
+    "@ai-sdk/svelte": "^4.0.205",
     "@codemirror/autocomplete": "^6.20.2",
     "@codemirror/commands": "^6.10.3",
     "@codemirror/lang-cpp": "^6.0.3",
@@ -97,10 +99,12 @@
     "lowlight": "^3.3.0",
     "mdsvex": "^0.12.6",
     "mode-watcher": "^1.1.0",
+    "openai": "^6.42.0",
     "paneforge": "^1.0.2",
     "peerjs": "^1.5.5",
     "phosphor-svelte": "^3.1.0",
     "playwright": "^1.58.2",
+    "posthog-js": "^1.386.8",
     "prettier": "^3.8.1",
     "prettier-plugin-sort-json": "^4.2.0",
     "prettier-plugin-svelte": "^3.5.1",
@@ -125,16 +129,12 @@
     "vite": "^7.3.1",
     "vite-plugin-devtools-json": "^1.0.0",
     "vitest": "^4.1.0",
-    "vitest-browser-svelte": "^2.0.2"
+    "vitest-browser-svelte": "^2.0.2",
+    "zod": "^4.4.3"
   },
   "dependencies": {
-    "@ai-sdk/openai": "^3.0.71",
-    "@ai-sdk/svelte": "^4.0.205",
-    "ai": "^6.0.205",
     "convex": "^1.39.1",
-    "convex-svelte": "^0.0.12",
-    "openai": "^6.42.0",
-    "zod": "^4.4.3"
+    "convex-svelte": "^0.0.12"
   },
   "overrides": {
     "@codemirror/view": "$@codemirror/view"
