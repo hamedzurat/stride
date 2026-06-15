@@ -7,6 +7,7 @@
   import { api } from '$convex/_generated/api.js';
   import type { Id } from '$convex/_generated/dataModel';
   import { env } from '$env/dynamic/public';
+  import { PUBLIC_DEMO_MODE } from '$env/static/public';
 
   import Codemirror from '$lib/components/editor/Codemirror.svelte';
   import LanguageSelect from '$lib/components/language-select.svelte';
@@ -17,11 +18,13 @@
   import { Skeleton } from '$lib/components/ui/skeleton/index.js';
   import { Spinner } from '$lib/components/ui/spinner/index.js';
   import { Textarea } from '$lib/components/ui/textarea/index.js';
+  import { isDemoMode } from '$lib/demo-mode';
   import { getLanguageName } from '$lib/judge0-utils';
   import type { SubmissionResult } from '$lib/server/judge0';
   import { session } from '$lib/session';
 
   const userRole = $derived($session?.role);
+  const demo = isDemoMode(PUBLIC_DEMO_MODE);
 
   const problemQuery = useQuery(api.problems.get, () =>
     page.params.problemId ? { id: page.params.problemId as Id<'problems'> } : 'skip',
@@ -61,6 +64,10 @@
   async function executeCode() {
     if (!selectedLanguageId) return;
 
+    if (demo) {
+      toast.info('Demo Mode', { description: 'Mocking Judge0 execution (run)', duration: 3000 });
+    }
+
     isExecuting = true;
     result = null;
 
@@ -87,6 +94,10 @@
 
   async function submitCode() {
     if (!selectedLanguageId || !sourceCode || !$session?.userId) return;
+
+    if (demo) {
+      toast.info('Demo Mode', { description: 'Mocking Judge0 execution (submit)', duration: 3000 });
+    }
 
     isSubmitting = true;
     try {

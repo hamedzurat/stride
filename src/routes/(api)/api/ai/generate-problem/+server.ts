@@ -4,10 +4,37 @@ import { streamObject } from 'ai';
 import { z } from 'zod';
 
 import { OPENAI_API_KEY } from '$env/static/private';
+import { PUBLIC_DEMO_MODE } from '$env/static/public';
 
-const openai = createOpenAI({ apiKey: OPENAI_API_KEY });
+import { isDemoMode } from '$lib/demo-mode';
+
+const demo = isDemoMode(PUBLIC_DEMO_MODE);
+const openai = demo ? null : createOpenAI({ apiKey: OPENAI_API_KEY });
 
 export async function POST({ request }) {
+  if (demo) {
+    console.log('[Demo Mode] AI generate-problem mock called');
+    const mockData = {
+      title: 'Sum of Two Numbers',
+      contentMd:
+        '<p>Write a program that reads two integers and prints their sum.</p><h2>Input</h2><p>The only line contains two integers $a$ and $b$.</p><h2>Output</h2><p>Print the sum of $a$ and $b$.</p><h2>Example</h2><p>Input:</p><pre class="rounded-md p-4 bg-muted/50 font-mono text-sm overflow-x-auto my-4 border border-border shadow-sm"><code>3 5</code></pre><p>Output:</p><pre class="rounded-md p-4 bg-muted/50 font-mono text-sm overflow-x-auto my-4 border border-border shadow-sm"><code>8</code></pre>',
+      testCases: [
+        { inputData: '3 5', outputData: '8' },
+        { inputData: '0 0', outputData: '0' },
+        { inputData: '100 200', outputData: '300' },
+        { inputData: '-5 10', outputData: '5' },
+      ],
+    };
+
+    const stream = new ReadableStream({
+      start(controller) {
+        controller.enqueue(JSON.stringify(mockData));
+        controller.close();
+      },
+    });
+    return new Response(stream, { headers: { 'Content-Type': 'text/plain' } });
+  }
+
   try {
     const { prompt, currentTitle } = await request.json();
 
@@ -16,7 +43,7 @@ export async function POST({ request }) {
     }
 
     const result = await streamObject({
-      model: openai('gpt-4o-mini'),
+      model: openai!('gpt-4o-mini'),
       system: `You are a competitive programming teacher. Your task is to read the user's idea and generate a formal, highly detailed programming problem.
 Enforce these strict HTML formatting rules for the problem description:
 1. Do NOT include a "Description" or "Problem Statement" heading. Start the description text immediately with standard <p> tags.

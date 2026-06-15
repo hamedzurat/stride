@@ -15,6 +15,7 @@
   import { mode } from 'mode-watcher';
   import { createHighlighter, type HighlighterCore } from 'shiki';
   import { ShikiMagicMove } from 'shiki-magic-move/svelte';
+  import { toast } from 'svelte-sonner';
 
   import SubmissionResultView from '$lib/components/submission-result-view.svelte';
   import { getShikiLang } from '$lib/judge0-utils';
@@ -30,6 +31,7 @@
   import { page } from '$app/state';
   import { api } from '$convex/_generated/api.js';
   import type { Id } from '$convex/_generated/dataModel.js';
+  import { PUBLIC_DEMO_MODE } from '$env/static/public';
 
   import LanguageSelect from '$lib/components/language-select.svelte';
   import * as Avatar from '$lib/components/ui/avatar/index.js';
@@ -41,12 +43,14 @@
   import { Skeleton } from '$lib/components/ui/skeleton/index.js';
   import { Spinner } from '$lib/components/ui/spinner/index.js';
   import { Textarea } from '$lib/components/ui/textarea/index.js';
+  import { isDemoMode } from '$lib/demo-mode';
   import type { SubmissionResult } from '$lib/server/judge0';
 
   // ─── Route params ──────────────────────────────────────────────────────────
   const activityId = $derived(page.params.activityId as Id<'activities'>);
   const problemId = $derived(page.params.problemId as Id<'problems'>);
   const studentId = $derived(page.params.studentId as Id<'users'>);
+  const demo = isDemoMode(PUBLIC_DEMO_MODE);
 
   // ─── Convex queries ────────────────────────────────────────────────────────
   const client = useConvexClient();
@@ -304,6 +308,10 @@
 
     const code = overrideCode ?? codeToRun;
     if (!code) return;
+
+    if (demo) {
+      toast.info('Demo Mode', { description: 'Mocking Judge0 execution', duration: 3000 });
+    }
 
     isExecuting = true;
     results.clear();

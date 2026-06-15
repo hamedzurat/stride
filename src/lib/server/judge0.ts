@@ -4,8 +4,13 @@
  */
 
 import { env } from '$env/dynamic/private';
+import { PUBLIC_DEMO_MODE } from '$env/static/public';
+
+import { isDemoMode } from '$lib/demo-mode';
 
 // ─── Config ─────────────────────────────────────────────────────────────────
+
+const demo = isDemoMode(PUBLIC_DEMO_MODE);
 
 export function getJudge0BaseUrl(): string {
   const url = env.JUDGE0_URL;
@@ -20,9 +25,135 @@ function getAuthHeaders(): Record<string, string> {
   return token ? { 'X-Auth-Token': token } : {};
 }
 
+// ─── Mock data (demo mode) ───────────────────────────────────────────────────
+
+const mockLanguages = [
+  { id: 50, name: 'C (GCC 9.2.0)' },
+  { id: 54, name: 'C++ (GCC 9.2.0)' },
+  { id: 60, name: 'Go (1.13.5)' },
+  { id: 62, name: 'Java (OpenJDK 13.0.1)' },
+  { id: 63, name: 'JavaScript (Node.js 12.14.0)' },
+  { id: 68, name: 'PHP (7.4.1)' },
+  { id: 70, name: 'Python (2.7.17)' },
+  { id: 71, name: 'Python (3.8.1)' },
+  { id: 73, name: 'Rust (1.40.0)' },
+  { id: 74, name: 'TypeScript (3.7.4)' },
+];
+
+const mockStatuses = [
+  { id: 1, description: 'In Queue' },
+  { id: 2, description: 'Processing' },
+  { id: 3, description: 'Accepted' },
+  { id: 4, description: 'Wrong Answer' },
+  { id: 5, description: 'Time Limit Exceeded' },
+  { id: 6, description: 'Compilation Error' },
+  { id: 7, description: 'Runtime Error (SIGSEGV)' },
+  { id: 8, description: 'Runtime Error (SIGXFSZ)' },
+  { id: 9, description: 'Runtime Error (SIGFPE)' },
+  { id: 10, description: 'Runtime Error (SIGABRT)' },
+  { id: 11, description: 'Runtime Error (NZEC)' },
+  { id: 12, description: 'Runtime Error (Other)' },
+  { id: 13, description: 'Internal Error' },
+  { id: 14, description: 'Exec Format Error' },
+];
+
+function pickStatus(): { id: number; description: string } {
+  const r = Math.random();
+  if (r < 0.6) return { id: 3, description: 'Accepted' };
+  if (r < 0.75) return { id: 4, description: 'Wrong Answer' };
+  if (r < 0.85) return { id: 5, description: 'Time Limit Exceeded' };
+  if (r < 0.92) return { id: 6, description: 'Compilation Error' };
+  return { id: 11, description: 'Runtime Error (NZEC)' };
+}
+
+function mockResult() {
+  const status = pickStatus();
+  return {
+    token: crypto.randomUUID(),
+    stdout: status.id === 3 ? b64encode('mock output') : null,
+    stderr: status.id === 6 ? b64encode('error: expected expression') : null,
+    compile_output: status.id === 6 ? b64encode('Compilation failed with errors') : null,
+    message: null,
+    exit_code: status.id === 3 ? 0 : 1,
+    exit_signal: null,
+    status,
+    created_at: new Date().toISOString(),
+    finished_at: new Date(Date.now() + 200).toISOString(),
+    time: '0.012',
+    wall_time: '0.018',
+    memory: 4096,
+    source_code: b64encode('print("hello")'),
+  };
+}
+
+function mockResponse(data: unknown, status = 200): Response {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: { 'Content-Type': 'application/json' },
+  });
+}
+
+function mockJudge0Fetch(path: string, method: string): Response {
+  console.log(`[Demo Mode] Judge0 mock: ${method} ${path}`);
+
+  if (path.startsWith('/languages')) {
+    return mockResponse(mockLanguages);
+  }
+  if (path.startsWith('/statuses')) {
+    return mockResponse(mockStatuses);
+  }
+  if (path.startsWith('/config')) {
+    return mockResponse({ cpu_time_limit: 5, memory_limit: 256000, maintenance_mode: false });
+  }
+  if (path.startsWith('/system')) {
+    return mockResponse({ Architecture: 'x86_64', 'Model name': 'Mock CPU' });
+  }
+  if (path.startsWith('/statistics')) {
+    return mockResponse({ submissions_count: 0, statuses: [], languages: [] });
+  }
+  if (path === '/workers' || path.startsWith('/workers?')) {
+    return mockResponse([{ id: 'mock-worker' }]);
+  }
+
+  if (path.startsWith('/submissions/batch')) {
+    if (method === 'POST') {
+      const count = 4;
+      const results = Array.from({ length: count }, () => mockResult());
+      return mockResponse(results.map((r) => ({ token: r.token })));
+    }
+    if (method === 'GET') {
+      const inQueue = Array.from({ length: 4 }, () => ({
+        ...mockResult(),
+        status: { id: 3, description: 'Accepted' },
+      }));
+      return mockResponse({ submissions: inQueue });
+    }
+  }
+
+  if (path.startsWith('/submissions/')) {
+    return mockResponse(mockResult());
+  }
+
+  if (path.startsWith('/submissions')) {
+    if (method === 'POST') {
+      const isWait = path.includes('wait=true');
+      if (isWait) {
+        return mockResponse(mockResult());
+      }
+      return mockResponse({ token: crypto.randomUUID() });
+    }
+  }
+
+  return mockResponse({});
+}
+
 // ─── Core fetch wrapper ──────────────────────────────────────────────────────
 
 export async function judge0Fetch(path: string, init: RequestInit = {}): Promise<Response> {
+  if (demo) {
+    return mockJudge0Fetch(path, init.method ?? 'GET');
+  }
+
   const base = getJudge0BaseUrl();
   const url = `${base}${path}`;
 

@@ -10,9 +10,12 @@
   import UsersIcon from '@lucide/svelte/icons/users';
   import type { ComponentProps } from 'svelte';
 
+  import { PUBLIC_DEMO_MODE } from '$env/static/public';
+
   import favicon from '$lib/assets/favicon.svg';
   import { useSidebar } from '$lib/components/ui/sidebar/context.svelte.js';
   import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+  import { isDemoMode } from '$lib/demo-mode';
   import { session } from '$lib/session';
   import { screenShareState } from '$lib/sharescreen.svelte';
 
@@ -20,6 +23,8 @@
   import NavSections from './nav-sections.svelte';
   import NavUser from './nav-user.svelte';
   import SidebarResizeHandle from './sidebar-resize-handle.svelte';
+
+  const demo = isDemoMode(PUBLIC_DEMO_MODE);
 
   let { ref = $bindable(null), collapsible = 'icon', ...restProps }: ComponentProps<typeof Sidebar.Root> = $props();
 
@@ -80,6 +85,16 @@
       </Sidebar.MenuItem>
     </Sidebar.Menu>
   </Sidebar.Header>
+
+  {#if demo}
+    <div class="flex items-center justify-center px-3 py-1.5">
+      <span
+        class="rounded-md border border-warning/20 bg-warning/10 px-2 py-0.5 text-xs font-semibold text-warning uppercase"
+      >
+        Read Only Mode
+      </span>
+    </div>
+  {/if}
 
   <Sidebar.Content>
     <!-- Group 1: Platform -->
