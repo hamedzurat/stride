@@ -8,19 +8,19 @@
 
 ### Full Demo
 
-<video src="https://github.com/hamedzurat/stride/raw/master/asset/stride-project-video.mp4" controls width="100%"></video>
+<video src="https://raw.githack.com/hamedzurat/stride/master/asset/stride-project-video.mp4" controls width="100%"></video>
 
 ### AI-Assisted Problem Generation & Drafting
 
-<video src="https://github.com/hamedzurat/stride/raw/master/asset/2026-06-15_01-34-04.mp4" controls width="100%"></video>
+<video src="https://raw.githack.com/hamedzurat/stride/master/asset/2026-06-15_01-34-04.mp4" controls width="100%"></video>
 
 ### Whitelabel Capabilities (Theme Customization)
 
 Stride is fully whitelabeled and supports deep theme customization. Below is a comparison of two theme presets showing the dynamic adaptability of the system's styling.
 
 <div align="center" style="display: flex; gap: 10px;">
-  <video src="https://github.com/hamedzurat/stride/raw/master/asset/PXL_20260615_052158747.mp4" controls width="49%"></video>
-  <video src="https://github.com/hamedzurat/stride/raw/master/asset/PXL_20260615_052305619.mp4" controls width="49%"></video>
+  <video src="https://raw.githack.com/hamedzurat/stride/master/asset/PXL_20260615_052158747.mp4" controls width="49%"></video>
+  <video src="https://raw.githack.com/hamedzurat/stride/master/asset/PXL_20260615_052305619.mp4" controls width="49%"></video>
 </div>
 
 ---
