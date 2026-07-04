@@ -121,3 +121,131 @@ export const listProblems = query({
     );
   },
 });
+
+export const listAllByUser = query({
+  args: { userId: v.id('users'), role: v.string() },
+  handler: async (ctx, args) => {
+    if (args.role === 'admin') {
+      const activities = await ctx.db.query('activities').collect();
+      return Promise.all(
+        activities.map(async (a) => {
+          const section = await ctx.db.get(a.sectionId);
+          return {
+            ...a,
+            sectionName: section?.name ?? 'Unknown Section',
+          };
+        }),
+      );
+    } else if (args.role === 'teacher') {
+      const rows = await ctx.db
+        .query('sectionTeachers')
+        .withIndex('by_teacher', (q) => q.eq('teacherId', args.userId))
+        .collect();
+      const sectionIds = rows.map((r) => r.sectionId);
+      const allActivities = [];
+      for (const sectionId of sectionIds) {
+        const section = await ctx.db.get(sectionId);
+        const acts = await ctx.db
+          .query('activities')
+          .withIndex('by_section', (q) => q.eq('sectionId', sectionId))
+          .collect();
+        for (const act of acts) {
+          allActivities.push({
+            ...act,
+            sectionName: section?.name ?? 'Unknown Section',
+          });
+        }
+      }
+      return allActivities;
+    } else {
+      const rows = await ctx.db
+        .query('sectionStudents')
+        .withIndex('by_student', (q) => q.eq('studentId', args.userId))
+        .collect();
+      const sectionIds = rows.map((r) => r.sectionId);
+      const allActivities = [];
+      for (const sectionId of sectionIds) {
+        const section = await ctx.db.get(sectionId);
+        const acts = await ctx.db
+          .query('activities')
+          .withIndex('by_section', (q) => q.eq('sectionId', sectionId))
+          .collect();
+        for (const act of acts) {
+          allActivities.push({
+            ...act,
+            sectionName: section?.name ?? 'Unknown Section',
+          });
+        }
+      }
+      return allActivities;
+    }
+  },
+});
+
+export const getLiveTelemetry = query({
+  args: { activityId: v.id('activities') },
+  handler: async (ctx, args) => {
+    const activity = await ctx.db.get(args.activityId);
+    if (!activity) return null;
+
+    // 1. Get problems of the activity
+    const activityProblems = await ctx.db
+      .query('activityProblems')
+      .withIndex('by_activity', (q) => q.eq('activityId', args.activityId))
+      .collect();
+    const sortedProblems = activityProblems.sort((a, b) => a.problemOrder - b.problemOrder);
+    const problems = await Promise.all(
+      sortedProblems.map(async (ap) => {
+        const problem = await ctx.db.get(ap.problemId);
+        return {
+          _id: ap.problemId,
+          title: problem?.title ?? 'Unknown Problem',
+        };
+      }),
+    );
+
+    // 2. Get students of the section
+    const studentsRows = await ctx.db
+      .query('sectionStudents')
+      .withIndex('by_section', (q) => q.eq('sectionId', activity.sectionId))
+      .collect();
+    const students = await Promise.all(
+      studentsRows.map(async (s) => {
+        const user = await ctx.db.get(s.studentId);
+        return {
+          _id: s.studentId,
+          name: user?.name ?? 'Unknown Student',
+          email: user?.email ?? '',
+        };
+      }),
+    );
+
+    // 3. Get all submissions for the activity
+    const submissions = await ctx.db
+      .query('submissions')
+      .withIndex('by_activity_problem', (q) => q.eq('activityId', args.activityId))
+      .collect();
+
+    // 4. Get all snapshots for the activity to track last active times
+    const snapshotsList = [];
+    for (const p of problems) {
+      const snaps = await ctx.db
+        .query('snapshots')
+        .withIndex('by_activity_problem', (q) => q.eq('activityId', args.activityId).eq('problemId', p._id))
+        .collect();
+      snapshotsList.push(...snaps);
+    }
+
+    return {
+      activity,
+      problems,
+      students,
+      submissions,
+      snapshots: snapshotsList.map((s) => ({
+        authorId: s.authorId,
+        problemId: s.problemId,
+        timestamp: s.timestamp,
+      })),
+    };
+  },
+});

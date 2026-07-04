@@ -9,6 +9,9 @@ import { env } from '$env/dynamic/private';
 
 export function getJudge0BaseUrl(): string {
   const url = env.JUDGE0_URL;
+  if (!url) {
+    throw new Error('JUDGE0_URL environment variable is not defined. Please set it in your .env file.');
+  }
   return url.replace(/\/$/, ''); // strip trailing slash
 }
 

@@ -25,3 +25,16 @@ vite.config.ts.timestamp-*
 # Paraglide
 src/lib/paraglide
 project.inlang/cache/
+
+# --- Playwright Test Artifacts ---
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright-cache/
+
+# --- Authentication Session State ---
+# IMPORTANT: Never commit your login sessions
+/playwright/.auth/
+
+# --- Browser Binaries ---
+/ms-playwright/

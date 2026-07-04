@@ -9,6 +9,10 @@
         secondary: 'bg-secondary text-secondary-foreground [a]:hover:bg-secondary/80',
         destructive:
           'bg-destructive/10 [a]:hover:bg-destructive/20 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 text-destructive dark:bg-destructive/20',
+        success:
+          'bg-success/15 [a]:hover:bg-success/25 focus-visible:ring-success/20 dark:focus-visible:ring-success/40 text-success border border-success/20',
+        warning:
+          'bg-warning/15 [a]:hover:bg-warning/25 focus-visible:ring-warning/20 dark:focus-visible:ring-warning/40 text-warning border border-warning/20',
         outline:
           'border-border text-foreground [a]:hover:bg-muted [a]:hover:text-muted-foreground bg-input/20 dark:bg-input/30',
         ghost: 'hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50',

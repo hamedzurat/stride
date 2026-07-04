@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { toast } from 'svelte-sonner';
 
   import * as Select from '$lib/components/ui/select/index.js';
   import type { Language } from '$lib/server/judge0';
@@ -28,8 +29,8 @@
           }
         }
       }
-    } catch (err) {
-      console.error('Failed to fetch languages:', err);
+    } catch (_err) {
+      toast.error('Failed to load supported languages.');
     }
   });
 

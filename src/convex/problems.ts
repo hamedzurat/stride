@@ -1,6 +1,7 @@
 import { v } from 'convex/values';
 
 import { mutation, query } from './_generated/server';
+import { associateImagesForProblem } from './uploadedImages';
 
 export const get = query({
   args: { id: v.id('problems') },
@@ -12,7 +13,19 @@ export const get = query({
 export const list = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db.query('problems').collect();
+    const problems = await ctx.db.query('problems').collect();
+    return await Promise.all(
+      problems.map(async (p) => {
+        const ios = await ctx.db
+          .query('problemIos')
+          .withIndex('by_problem', (q) => q.eq('problemId', p._id))
+          .collect();
+        return {
+          ...p,
+          testCaseCount: ios.length,
+        };
+      }),
+    );
   },
 });
 
@@ -34,7 +47,9 @@ export const create = mutation({
   },
   handler: async (ctx, args) => {
     const now = Date.now();
-    return await ctx.db.insert('problems', { ...args, createdAt: now, updatedAt: now });
+    const problemId = await ctx.db.insert('problems', { ...args, createdAt: now, updatedAt: now });
+    await associateImagesForProblem(ctx, problemId, args.contentMd);
+    return problemId;
   },
 });
 
@@ -47,12 +62,27 @@ export const update = mutation({
   handler: async (ctx, { id, ...fields }) => {
     const patch = Object.fromEntries(Object.entries(fields).filter(([, v]) => v !== undefined));
     await ctx.db.patch(id, { ...patch, updatedAt: Date.now() });
+    if (fields.contentMd !== undefined) {
+      await associateImagesForProblem(ctx, id, fields.contentMd);
+    }
   },
 });
 
 export const remove = mutation({
   args: { id: v.id('problems') },
   handler: async (ctx, args) => {
+    const associated = await ctx.db
+      .query('uploadedImages')
+      .withIndex('by_problem', (q) => q.eq('problemId', args.id))
+      .collect();
+    for (const img of associated) {
+      try {
+        await ctx.storage.delete(img.storageId);
+      } catch (e) {
+        console.error('Failed to delete problem image from storage on delete:', e);
+      }
+      await ctx.db.delete(img._id);
+    }
     await ctx.db.delete(args.id);
   },
 });

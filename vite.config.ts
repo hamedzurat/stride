@@ -14,6 +14,20 @@ export default defineConfig({
     devtoolsJson(),
     paraglideVitePlugin({ project: './project.inlang', outdir: './src/lib/paraglide' }),
   ],
+  optimizeDeps: {
+    entries: ['src/routes/**/*.svelte', 'src/lib/**/*.svelte', 'src/routes/**/*.ts', 'src/lib/**/*.ts'],
+    include: [
+      'phosphor-svelte',
+      '@lucide/svelte',
+      'convex-svelte',
+      'layerchart',
+      'katex',
+      'gsap',
+      'peerjs',
+      'simple-peer',
+      'codemirror',
+    ],
+  },
   test: {
     expect: { requireAssertions: true },
     projects: [

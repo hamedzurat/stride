@@ -1,6 +1,7 @@
 import { v } from 'convex/values';
 
 import { mutation, query } from './_generated/server';
+import { associateImagesForSection } from './uploadedImages';
 
 export const get = query({
   args: { id: v.id('sections') },
@@ -16,6 +17,34 @@ export const list = query({
   },
 });
 
+export const listWithMembers = query({
+  args: {},
+  handler: async (ctx) => {
+    const sections = await ctx.db.query('sections').collect();
+    return Promise.all(
+      sections.map(async (section) => {
+        const teachersRows = await ctx.db
+          .query('sectionTeachers')
+          .withIndex('by_section', (q) => q.eq('sectionId', section._id))
+          .collect();
+        const teachers = await Promise.all(teachersRows.map((r) => ctx.db.get(r.teacherId)));
+
+        const studentsRows = await ctx.db
+          .query('sectionStudents')
+          .withIndex('by_section', (q) => q.eq('sectionId', section._id))
+          .collect();
+        const students = await Promise.all(studentsRows.map((r) => ctx.db.get(r.studentId)));
+
+        return {
+          ...section,
+          teachers: teachers.filter(Boolean),
+          students: students.filter(Boolean),
+        };
+      }),
+    );
+  },
+});
+
 export const create = mutation({
   args: {
     name: v.string(),
@@ -23,7 +52,11 @@ export const create = mutation({
   },
   handler: async (ctx, args) => {
     const now = Date.now();
-    return await ctx.db.insert('sections', { ...args, createdAt: now, updatedAt: now });
+    const sectionId = await ctx.db.insert('sections', { ...args, createdAt: now, updatedAt: now });
+    if (args.aboutMd) {
+      await associateImagesForSection(ctx, sectionId, args.aboutMd);
+    }
+    return sectionId;
   },
 });
 
@@ -36,12 +69,42 @@ export const update = mutation({
   handler: async (ctx, { id, ...fields }) => {
     const patch = Object.fromEntries(Object.entries(fields).filter(([, v]) => v !== undefined));
     await ctx.db.patch(id, { ...patch, updatedAt: Date.now() });
+    if (fields.aboutMd !== undefined) {
+      await associateImagesForSection(ctx, id, fields.aboutMd);
+    }
   },
 });
 
 export const remove = mutation({
   args: { id: v.id('sections') },
   handler: async (ctx, args) => {
+    const associated = await ctx.db
+      .query('uploadedImages')
+      .withIndex('by_section', (q) => q.eq('sectionId', args.id))
+      .collect();
+    for (const img of associated) {
+      try {
+        await ctx.storage.delete(img.storageId);
+      } catch (e) {
+        console.error('Failed to delete section image from storage on delete:', e);
+      }
+      await ctx.db.delete(img._id);
+    }
+
+    // Clean up any uploaded section files/resources
+    const resources = await ctx.db
+      .query('sectionResources')
+      .withIndex('by_section', (q) => q.eq('sectionId', args.id))
+      .collect();
+    for (const res of resources) {
+      try {
+        await ctx.storage.delete(res.storageId);
+      } catch (e) {
+        console.error('Failed to delete section resource from storage on delete:', e);
+      }
+      await ctx.db.delete(res._id);
+    }
+
     await ctx.db.delete(args.id);
   },
 });

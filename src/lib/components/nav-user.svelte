@@ -7,6 +7,7 @@
   import SettingsIcon from '@lucide/svelte/icons/settings';
   import SunIcon from '@lucide/svelte/icons/sun';
   import UserIcon from '@lucide/svelte/icons/user';
+  import gsap from 'gsap';
   import { mode, toggleMode } from 'mode-watcher';
 
   import { goto } from '$app/navigation';
@@ -25,6 +26,54 @@
   function handleLogout() {
     clearSession();
     goto('/login');
+  }
+
+  function curtain() {
+    const el = document.createElement('div');
+    el.className = 'nav-curtain';
+    el.style.inset = '0';
+    document.body.appendChild(el);
+    gsap.set(el, { clipPath: 'inset(0 100% 0 0)' });
+    return el;
+  }
+
+  async function cover(el: HTMLDivElement) {
+    return new Promise<void>((r) => {
+      gsap.to(el, {
+        clipPath: 'inset(0 0% 0 0)',
+        duration: 0.25,
+        ease: 'power2.out',
+        onComplete: r,
+      });
+    });
+  }
+
+  async function reveal(el: HTMLDivElement) {
+    return new Promise<void>((r) => {
+      gsap.to(el, {
+        clipPath: 'inset(0 0% 0 100%)',
+        duration: 0.4,
+        ease: 'power2.inOut',
+        onComplete: r,
+      });
+    });
+  }
+
+  async function handleThemeToggle() {
+    const c = curtain();
+    await cover(c);
+    toggleMode();
+    await new Promise((r) => setTimeout(r, 50));
+    await new Promise((r) => requestAnimationFrame(r));
+    await reveal(c);
+    c.remove();
+  }
+
+  function handleLanguage(locale: (typeof locales)[number]) {
+    const c = curtain();
+    cover(c).then(() => {
+      setLocale(locale);
+    });
   }
 
   const localeLabels: Record<string, string> = {
@@ -108,7 +157,7 @@
         </DropdownMenu.Group>
         <DropdownMenu.Separator />
         <DropdownMenu.Group>
-          <DropdownMenu.Item onclick={toggleMode}>
+          <DropdownMenu.Item onclick={handleThemeToggle}>
             {#if mode.current === 'dark'}
               <SunIcon />
               Light Mode
@@ -124,7 +173,7 @@
             </DropdownMenu.SubTrigger>
             <DropdownMenu.SubContent>
               {#each locales as locale (locale)}
-                <DropdownMenu.Item onclick={() => setLocale(locale)}>
+                <DropdownMenu.Item onclick={() => handleLanguage(locale)}>
                   {localeLabels[locale] ?? locale}
                   {#if getLocale() === locale}
                     <CheckIcon class="ml-auto size-4" />

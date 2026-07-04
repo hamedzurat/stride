@@ -187,10 +187,14 @@
       </Card.Root>
 
       {#snippet termsLink()}
-        <a href="##" class="underline underline-offset-4 hover:text-primary">{m.terms_of_service()}</a>
+        <a href="/disclaimer" class="underline underline-offset-4 hover:text-primary" target="_blank"
+          >{m.terms_of_service()}</a
+        >
       {/snippet}
       {#snippet privacyLink()}
-        <a href="##" class="underline underline-offset-4 hover:text-primary">{m.privacy_policy()}</a>
+        <a href="/disclaimer" class="underline underline-offset-4 hover:text-primary" target="_blank"
+          >{m.privacy_policy()}</a
+        >
       {/snippet}
 
       <FieldDescription class="px-6 text-center">
@@ -201,6 +205,14 @@
             '[[privacy]]': privacyLink,
           }}
         />
+        <span class="mx-1">&bull;</span>
+        Checkout the code at
+        <a
+          href="https://github.com/hamedzurat/stride/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="underline underline-offset-4 hover:text-primary">GitHub</a
+        >
       </FieldDescription>
     </div>
   </div>

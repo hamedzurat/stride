@@ -7,7 +7,7 @@ This project uses a custom seeding script located in `src/convex/seed.ts`. This 
 To reset and seed the database, run the following command from the root directory:
 
 ```bash
-bunx convex run seed
+bun run seed
 ```
 
 > [!IMPORTANT]
