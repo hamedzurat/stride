@@ -1,26 +1,70 @@
 # Stride
 
-**A secure, cheat-resistant academic coding assessment platform designed to eliminate exam plagiarism in real-time. Stride replaces paper tests and messy local setups with advanced anti-cheating monitoring, AI-generated questions, built-in coding environments, and automated grading.**
+A secure, cheat-resistant academic coding assessment platform designed to eliminate exam plagiarism in real-time. Stride replaces paper tests and messy local setups with advanced anti-cheating monitoring, AI-generated questions, built-in coding environments, and automated grading.
 
 ---
 
-## Demos and Whitelabeling
+## Key Features
+
+### Advanced Anti-Cheating Engine
+
+Stride goes beyond basic monitoring to create a truly cheat-resistant examination environment:
+
+- **Real-Time Proctoring Dashboard:** A centralized dashboard for administrators to monitor all students simultaneously.
+- **AI-Powered Behavior Monitoring:**
+  - **Plagiarism Detection:** Built-in code similarity analysis to flag copied solutions.
+  - **Distraction Detection:** Advanced heuristics to detect off-screen activity, mouse movements, and keyboard patterns indicative of cheating.
+  - **Anomaly Detection:** Real-time alerts for out-of-place code snippets, unusual timing patterns, or suspicious copy-pasting.
+- **Proactive Intervention:** Automated actions to deter cheating:
+  - **Visual Alerts:** Flashing red borders and warning pop-ups on the student's screen.
+  - **Progress Freezing:** Halting submission timers or limiting typing access.
+  - **Session Termination:** Automatic locking of the exam in cases of persistent violations.
+- **Tamper-Evident Logging:** Comprehensive audit trail of all suspicious activities, timestamps, and system actions.
+
+### AI-Assisted Question Generation
+
+Accelerate your test creation process with intelligent automation:
+
+- **One-Click Drafting:** Generate complete exam papers in seconds using simple text prompts.
+- **Contextual Understanding:** The AI analyzes provided materials (e.g., course notes, textbook chapters) to generate relevant and context-specific questions.
+- **Customizable Difficulty:** Easily specify the difficulty level, ranging from easy to expert, to match your assessment needs.
+- **Built-in Problem Database:** Access a rich, pre-existing library of programming problems to draw from, ensuring variety and quality.
+
+### Integrated Coding Environment
+
+Eliminate the friction of local development setups:
+
+- **In-Browser IDE:** A fully functional code editor embedded directly within the assessment interface.
+- **Multi-Language Support:** Supports major programming languages including Python, Java, C++, and JavaScript.
+- **Real-Time Feedback:** Instant compilation and execution of code directly within the browser.
+
+### Automated Grading and Review
+
+Streamline the assessment workflow:
+
+- **Automated Test Suites:** Define custom test cases for each problem to validate correctness automatically.
+- **AI-Powered Grading Assistance:** Leverage AI to help evaluate the quality of submissions, provide constructive feedback, and suggest improvements.
+- **Detailed Analytics:** Generate comprehensive reports on student performance, time management, and problem-solving efficiency.
+
+---
+
+## Demos
 
 ### Full Demo
 
-<video src="https://raw.githack.com/hamedzurat/stride/master/asset/stride-project-video.mp4" controls width="100%"></video>
+<video src="https://files.catbox.moe/w5oxsg.mp4" controls width="100%"></video>
 
 ### AI-Assisted Problem Generation & Drafting
 
-<video src="https://raw.githack.com/hamedzurat/stride/master/asset/2026-06-15_01-34-04.mp4" controls width="100%"></video>
+<video src="https://files.catbox.moe/96m3p2.mp4" controls width="100%"></video>
 
 ### Whitelabel Capabilities (Theme Customization)
 
 Stride is fully whitelabeled and supports deep theme customization. Below is a comparison of two theme presets showing the dynamic adaptability of the system's styling.
 
 <div align="center" style="display: flex; gap: 10px;">
-  <video src="https://raw.githack.com/hamedzurat/stride/master/asset/PXL_20260615_052158747.mp4" controls width="49%"></video>
-  <video src="https://raw.githack.com/hamedzurat/stride/master/asset/PXL_20260615_052305619.mp4" controls width="49%"></video>
+  <video src="https://files.catbox.moe/jwpno0.mp4" controls width="49%"></video>
+  <video src="https://files.catbox.moe/ogqxb8.mp4" controls width="49%"></video>
 </div>
 
 ---
