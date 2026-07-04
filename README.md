@@ -1,123 +1,78 @@
 # Stride
 
-**A real-time academic assessment and competitive programming platform.**
-
-[![Built with Svelte](https://img.shields.io/badge/Svelte-FF3E00?style=for-the-badge&logo=svelte&logoColor=white)](https://svelte.dev/)
-[![Powered by Convex](https://img.shields.io/badge/Convex-EA2C00?style=for-the-badge&logo=convex&logoColor=white)](https://convex.dev/)
-[![Built with Bun](https://img.shields.io/badge/Bun-%23000000.svg?style=for-the-badge&logo=bun&logoColor=white)](https://bun.sh/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+**A secure, cheat-resistant academic coding assessment platform designed to eliminate exam plagiarism in real-time. Stride replaces paper tests and messy local setups with advanced anti-cheating monitoring, AI-generated questions, built-in coding environments, and automated grading.**
 
 ---
 
-## Showcase
+## Demos and Whitelabeling
 
-<div align="center">
-  <img src="./docs/assets/screen-sections.png" alt="Stride Dashboard and Sections" width="800" style="border-radius: 8px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" />
-  
-  <br />
-  
-  <img src="./docs/assets/screenshot-activities.png" alt="Activities" width="400" style="border-radius: 8px; margin-right: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" />
-  <img src="./docs/assets/screenshot-forum.png" alt="Community Forum and Discussions" width="400" style="border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" />
+### Full Demo
+
+<video src="https://github.com/hamedzurat/stride/raw/master/asset/stride-project-video.mp4" controls width="100%"></video>
+
+### AI-Assisted Problem Generation & Drafting
+
+<video src="https://github.com/hamedzurat/stride/raw/master/asset/2026-06-15_01-34-04.mp4" controls width="100%"></video>
+
+### Whitelabel Capabilities (Theme Customization)
+
+Stride is fully whitelabeled and supports deep theme customization. Below is a comparison of two theme presets showing the dynamic adaptability of the system's styling.
+
+<div align="center" style="display: flex; gap: 10px;">
+  <video src="https://github.com/hamedzurat/stride/raw/master/asset/PXL_20260615_052158747.mp4" controls width="49%"></video>
+  <video src="https://github.com/hamedzurat/stride/raw/master/asset/PXL_20260615_052305619.mp4" controls width="49%"></video>
 </div>
 
 ---
 
-## Features
+## Technical Stack
 
-- **AI Problem Auto-Drafting:** Teachers can use OpenAI GPT models to instantly generate comprehensive programming problems, complete with edge-case test suites and HTML-formatted descriptions.
-- **Rich Text and LaTeX Support:** An embedded Tiptap editor provides seamless markdown and KaTeX/LaTeX math support for writing complex mathematical problems.
-- **Remote Code Execution:** Securely compile and execute student submissions against test cases using the Judge0 API.
-- **Real-Time Sync:** Powered by Convex, submissions, problem updates, and assessments sync across all active clients instantaneously without manual refreshing.
-- **Modern UI:** A sleek, responsive, and accessible interface built with Tailwind CSS v4 and Shadcn-Svelte.
+- **Frontend:** [Svelte 5](https://svelte.dev/) (using Svelte Runes for reactive state management), [Vite](https://vite.dev/), [Tailwind CSS v4](https://tailwindcss.com/), and [Shadcn-Svelte](https://www.shadcn-svelte.com/) components.
+- **Real-time Backend:** [Convex](https://convex.dev/) database & serverless backend functions.
+- **Code Execution:** [Judge0](https://judge0.com/) API (compiles and runs student submissions against dynamic test suites).
+- **AI Automation:** OpenAI models powered by [Vercel AI SDK](https://sdk.vercel.ai/) for automatic problem drafting and teacher grading assistance.
+- **Rich Editor:** [Tiptap](https://tiptap.dev/) with math typesetting ([KaTeX](https://katex.org/)) and [CodeMirror](https://codemirror.net/) for the code IDE.
+- **Localization:** [Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) via [Inlang](https://inlang.com/) for compile-time safe i18n.
 
 ---
 
-## Tech Stack
+## SDLC and Developer Experience (DX)
 
-### Frontend
+Stride includes several customized tools and strict validation suites to ensure a clean, maintainable, and type-safe codebase:
 
-- **Framework:** [Svelte 5](https://svelte-5-preview.vercel.app/) (using Runes for state management)
-- **Styling:** [Tailwind CSS v4](https://tailwindcss.com/)
-- **Components:** [Shadcn-Svelte](https://www.shadcn-svelte.com/)
-- **Rich Text:** [Tiptap](https://tiptap.dev/) (with Math extension)
+### Role-Based E2E Testing with Playwright
 
-### Backend and Infrastructure
+Our end-to-end suite ([docs/TESTING.md](./docs/TESTING.md)) splits automated test cases into three separate authenticated storage states:
 
-- **Database and Backend:** [Convex](https://convex.dev/) (Real-time backend-as-a-service)
-- **Code Execution:** [Judge0](https://judge0.com/) API
-- **AI Generation:** [Vercel AI SDK](https://sdk.vercel.ai/) and OpenAI API
-- **Package Manager:** [Bun](https://bun.sh/)
+- **Admin Flow:** Creating new student accounts and managing settings.
+- **Teacher Flow:** Reviewing submissions, monitoring CCTV live streams, and viewing playback histories.
+- **Student Flow:** Compiling and submitting Python code, using chat/forum features, and sharing screens.
+
+### Git Flow and Branch Protection
+
+To maintain main-branch stability, direct pushes to the `master` branch are strictly forbidden:
+
+- **Pull Requests Only:** All development must occur on feature/fix branches. Changes can only be integrated into `master` via pull requests (PR).
+- **Mandatory Peer Reviews:** Merging a PR requires a review and approval from at least one other team contributor.
+
+### Git Hooks and Automated Commit Validation
+
+We use Husky to run pre-commit and post-commit validations to ensure high code quality:
+
+- **Commit Message Linting (`commit-msg`):** Enforces [Conventional Commits](./docs/commit-messages.md) formatting via `commitlint`. Commits with non-conforming messages are rejected automatically.
+- **Code Pre-checks (`pre-commit`):**
+  - Runs `lint-staged` to automatically format all modified files.
+  - Triggers Svelte/TypeScript typechecking (`bun run check`) to ensure no broken or compilation-failing code can be committed.
+- **Dead Code Detection:** We run `knip` to identify unused files, exports, and dependencies before integration.
 
 ---
 
 ## Getting Started
 
-### Prerequisites
+Detailed instructions for setup, running development servers, local Judge0 setups, and deployment can be found in our documentation folder:
 
-Ensure you have the following installed:
-
-- **[Bun](https://bun.sh/)** (Required: npm/yarn are not used in this project)
-- **Node.js** (v18 or higher recommended)
-
-### Installation
-
-1. **Clone the repository**
-
-   ```bash
-   git clone https://github.com/hamedzurat/stride.git
-   cd stride
-   ```
-
-2. **Install dependencies using Bun**
-
-   ```bash
-   bun install
-   ```
-
-3. **Environment Variables**
-   Create a `.env.local` file in the root directory and add the following keys. You will need active accounts for Convex, OpenAI, and Judge0.
-
-   ```env
-   # .env.local
-
-   # Convex Configuration
-   CONVEX_DEPLOYMENT=your_convex_deployment_name
-   NEXT_PUBLIC_CONVEX_URL=https://your-convex-url.convex.cloud
-
-   # OpenAI (For AI Problem Generator)
-   OPENAI_API_KEY=sk-your_openai_api_key
-
-   # Judge0 (For Remote Code Execution)
-   JUDGE0_API_KEY=your_judge0_api_key
-   ```
-
-4. **Run the Development Server**
-   Start the SvelteKit frontend and the Convex backend concurrently:
-   ```bash
-   bun run dev
-   ```
-   The app will be available at `http://localhost:5173`.
-
----
-
-## Project Structure
-
-```text
-stride/
-├── .agents/              # AI Agent Skills and Resources
-├── convex/               # Convex Backend Functions and Schema
-│   ├── _generated/       # Autogenerated Convex Types
-│   ├── schema.ts         # Database Schema Definition
-│   └── ...               # Backend Mutations and Queries
-├── src/                  # SvelteKit Application
-│   ├── lib/              # Shared Utilities, Components, and Hooks
-│   │   ├── components/   # UI Components (Shadcn, Tiptap, etc.)
-│   │   └── ...
-│   ├── routes/           # File-based Routing (Pages and API Endpoints)
-│   │   ├── (api)/        # Server-side API endpoints (e.g., AI generation)
-│   │   └── (app)/        # Frontend application pages
-│   └── app.html          # Base HTML template
-├── static/               # Public Static Assets
-├── package.json          # Project Dependencies (Bun)
-└── README.md             # Project Documentation
-```
+- [Getting Started & Setup](./docs/getting-started.md)
+- [End-to-End Testing Guide](./docs/TESTING.md)
+- [Commit Message Guidelines](./docs/commit-messages.md)
+- [Database Seeding Instructions](./docs/seeding.md)
+- [Production Deployment Guide](./docs/deployment.md)
